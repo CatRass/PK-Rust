@@ -3,5 +3,5 @@
 version = 3
 
 [[package]]
-name = "pokemon-save-editor"
+name = "PKRust"
 version = "0.1.0"
