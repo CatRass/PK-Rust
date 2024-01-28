@@ -4,19 +4,18 @@
 use std::fs;
 use std::process;
 
-const MONEY_ADDR: usize     = 0x25F3;
-const PLAYER_ID: usize      = 0x2605;
-const NAME_ADDR: usize      = 0x2598;
+use crate::CreatureData::Pokemon;
+
+const MONEY_ADDR:   usize     = 0x25F3;
+const ID_ADDR:      usize     = 0x2605;
+const NAME_ADDR:    usize     = 0x2598;
+const PARTY_ADDR:   usize     = 0x2F2C;
 
 #[allow(dead_code)]
 pub mod CreatureData {
-    pub(crate) struct Pokemon {
-        nickname: String,
-        typing: (Type,Type),
-        level: i8,
-        moves: (Move,Move,Move,Move),
-    }
+    use std::fs;
 
+    #[derive(Debug)]
     enum Type {
         Normal      = 0,
         Fire        = 1,
@@ -40,11 +39,34 @@ pub mod CreatureData {
         // For single type pokemon
         Null
     }
+    impl Type {
+        pub(crate) fn get(index: &i16) -> Type{
+            let returnType = match index {
+                0   => Type::Normal   ,
+                1   => Type::Fire     ,
+                2   => Type::Fighting ,
+                3   => Type::Water    ,
+                4   => Type::Flying   ,
+                5   => Type::Grass    ,
+                6   => Type::Poison   ,
+                7   => Type::Electric ,
+                8   => Type::Ground   ,
+                9   => Type::Psychic  ,
+                10  => Type::Rock     ,
+                11  => Type::Ice      ,
+                12  => Type::Bug      ,
+                13  => Type::Dragon   ,
+                14  => Type::Ghost    ,
+                15  => Type::Dark     ,
+                16  => Type::Steel    ,
+                17  => Type::Fairy    ,
+                18  => Type::Null     ,
+                _   => Type::Null
+            };
 
-    // struct Move {
-    //     name: String,
-    //     typing: Type,
-    // }
+            returnType
+        }
+    }
 
     enum Move {
         /// A move will consist of its:
@@ -57,6 +79,66 @@ pub mod CreatureData {
         /// that has not been allocated a move
         Null
     }
+
+    #[derive(Debug)]
+    struct Species {
+        index: i16,
+        pokedex: i16,
+        name: String,
+        typing: [Type;2],
+    }
+
+    impl Species {
+        fn parse(index: i16) -> Species {
+            let speciesFile = fs::read_to_string("./src/species.pkmn").unwrap();
+            let mut parsedSpecies: &str = "No Pokemon found";
+
+            let hexIndex = format!("0x{:02X?}",index);
+            // println!("{}",hexIndex);
+            
+            for line in speciesFile.lines() {
+                if line.contains(&hexIndex) {
+                    parsedSpecies = line;
+                    break;
+                }
+            }
+
+            let info: Vec<&str> = parsedSpecies.split(" ").collect();
+            let pokedex = info[0].parse::<i16>().unwrap();
+            let name = info[2].to_string();
+
+            // PLEASE fix this later, I don't even want to explain what horribleness I wrote here
+            let types: Vec<&str> = info[3].trim_matches('{').trim_matches('}').split(',').collect();
+            let typing: [Type;2] = [
+                                    Type::get(&(types[0].parse::<i16>().unwrap())), 
+                                    Type::get(&(types[1].parse::<i16>().unwrap()))
+                                   ];
+
+            return Species{index,pokedex,name,typing};
+        }
+    }
+
+    #[derive(Debug)]
+    pub(crate) struct Pokemon {
+        nickname: String,
+        species: Species,
+        level: i8,
+        // moves: [Move; 4],
+    }
+
+    impl Pokemon {
+        pub(crate) fn get(index: i16, level:i8, nickname: String) -> Pokemon {
+            let species = Species::parse(index);
+
+            return Pokemon{nickname,species,level};
+        }
+    }
+
+}
+
+struct Name {
+    encoded: [i16; 11],
+    text: String
 }
 
 pub struct Save {
@@ -64,36 +146,48 @@ pub struct Save {
     /// The amount of money the player holds.
     /// 
     /// [Source](https://bulbapedia.bulbagarden.net/wiki/Save_data_structure_(Generation_I)#bank1_main_money)
-    money: i16,
+    money: u32,
     id: i32,
-    // party: (CreatureData::Pokemon, CreatureData::Pokemon)
-}
-struct Name {
-    encoded: [i16; 11],
-    text: String
+    party: Vec<Pokemon>
 }
 
 impl Save {
     
     pub fn load(file: &str) -> Save{
 
-        let test = match fs::read(file) {
+        let save = match fs::read(file) {
             Ok(result)                => result,
             Err(error)                  => match error.kind() {
-                std::io::ErrorKind::NotFound   => {eprintln!("File does note exist"); process::exit(1);}
+                std::io::ErrorKind::NotFound   => {eprintln!("File does not exist"); process::exit(1);}
                 _                              => {eprintln!("Error: {}",error.kind()); process::exit(1);}
             }
         };
 
         // Conversion from Hex-Coded Decimal
-        let money = Self::getMoney(&test);
-        let id = Self::getID(&test);
+        let money = Self::getMoney(&save);
+        let id = Self::getID(&save);
 
-        let trainerName = Self::getName(&test);
+        let trainerName = Self::getName(&save);
         let trainer = Name{encoded: trainerName, text: textDecode(&trainerName)};
 
-        
-        return Save{trainer, money, id}
+        let mut party:  Vec<Pokemon> = Vec::new();
+
+        for creature in 0..save[PARTY_ADDR] as usize {
+            let pkmnAddress = PARTY_ADDR + 0x8 + (creature * 0x2C);
+            let nickAddress: usize = PARTY_ADDR + 0x152 + (creature * 0xB);
+
+            let mut encodedNick: [i16; 11]= [0; 11];
+            for num in 0..11 {
+                encodedNick[num] = format!("{}",save[nickAddress+num]).parse::<i16>().unwrap();
+            }
+
+            let nickname = textDecode(&encodedNick);
+
+            party.push(Pokemon::get(save[pkmnAddress] as i16, save[pkmnAddress+0x21] as i8, nickname));
+            println!("Current Pokemon: {:?}", party[creature]);
+        }
+
+        return Save{trainer, money, id, party}
 
     }
 
@@ -114,43 +208,19 @@ impl Save {
         for num in 0..11 {
             name[num] = format!("{}",save[NAME_ADDR+num]).parse::<i16>().unwrap();
         }
-        
         return name;
     }
 
-    fn getMoney(save: &Vec<u8>) -> i16{
+    fn getMoney(save: &Vec<u8>) -> u32{
         return format!("{:X}{:X}{:X}",save[MONEY_ADDR],save[MONEY_ADDR+1],save[MONEY_ADDR+2])
-        .parse::<i16>()
+        .parse::<u32>()
         .unwrap();
     }
 
     fn getID(save: &Vec<u8>) -> i32 {
-        let hexId =
-            format!("{:X}",save[PLAYER_ID]).parse::<i16>().unwrap()*100 +
-            format!("{:X}",save[PLAYER_ID+1]).parse::<i16>().unwrap()*1
-        ;
-
-        return hex_to_dec(hexId);
+        let stringID = format!("{:X?}{:X?}",save[ID_ADDR],save[ID_ADDR+1]);
+        return i32::from_str_radix(&stringID, 16).unwrap();
     }
-}
-
-/// A function for converting hexidecimal numbers to decimal
-/// 
-/// Note that the function currently only works for numeric hex numbers, meaning no A-F digits
-/// 
-/// **TODO**: Optimise this!
-fn hex_to_dec(mut hex_num: i16) -> i32 {
-    let mut dec_num: i32 = 0;
-    let mut multiplier: i32 = 1;
-
-    while hex_num > 0 {
-        let curr_place = hex_num as i32 %10 * multiplier;
-        dec_num = dec_num + curr_place as i32;
-        multiplier = multiplier * 16;
-        hex_num = hex_num/10;
-    }
-
-    return dec_num;
 }
 
 /// Decodes text, as text in most games uses character encoding
@@ -225,3 +295,9 @@ fn textDecode(encoded: &[i16; 11]) -> String{
 
     return String::from_utf8(name).unwrap();
 }
+
+// /// Encodes text into the character encoding used by Gen 1
+// /// **TODO**: Implement this!
+// fn textEncode(decoded: &String) -> [i16; 11]{
+//     todo!("Finish this, preferrably optimised");
+// }
