@@ -6,10 +6,18 @@ use std::process;
 
 use crate::CreatureData::Pokemon;
 
-const MONEY_ADDR:   usize     = 0x25F3;
-const ID_ADDR:      usize     = 0x2605;
-const NAME_ADDR:    usize     = 0x2598;
-const PARTY_ADDR:   usize     = 0x2F2C;
+const MONEY_ADDR:   usize   = 0x25F3;
+const ID_ADDR:      usize   = 0x2605;
+const NAME_ADDR:    usize   = 0x2598;
+const PARTY_ADDR:   usize   = 0x2F2C;
+
+// Pokemon Data Offsets
+const NICK_OFF:     usize   = 0x152;
+const HPEV_OFF:     usize   = 0x11;
+const ATEV_OFF:     usize   = 0x13;
+const DEEV_OFF:     usize   = 0x15;
+const SPDEV_OFF:    usize   = 0x17;
+const SPCEV_OFF:    usize   = 0x19;
 
 #[allow(dead_code)]
 pub mod CreatureData {
@@ -119,18 +127,46 @@ pub mod CreatureData {
     }
 
     #[derive(Debug)]
+    struct EVs {
+        hp: u16,
+        atk: u16,
+        def: u16,
+        spd: u16,
+        spc: u16
+    }
+
+    #[derive(Debug)]
     pub(crate) struct Pokemon {
         nickname: String,
         species: Species,
         level: i8,
         // moves: [Move; 4],
+        evs: EVs,
     }
 
     impl Pokemon {
-        pub(crate) fn get(index: i16, level:i8, nickname: String) -> Pokemon {
+        pub(crate) fn get(index: i16, level:i8, nickname: String, hp: u16, atk: u16, def: u16, spd: u16, spc: u16,) -> Pokemon {
             let species = Species::parse(index);
 
-            return Pokemon{nickname,species,level};
+            let evs = EVs{hp, atk, def, spd, spc};
+            return Pokemon{nickname,species,level,evs};
+        }
+
+        pub(crate) fn getDetails(self) -> String{
+            let basicDetails= format!("{:15} {:15} LVL:{}\n",
+                                            self.species.name, 
+                                            self.nickname, 
+                                            self.level,
+                                        ); 
+            let evDetails   = format!("\tHP EV: {}\n\tATK EV: {}\n\tDEF EV:{}\n\tSPD EV: {}\n\tSPCL EV: {}\n",
+                                            self.evs.hp,
+                                            self.evs.atk,
+                                            self.evs.def,
+                                            self.evs.spd,
+                                            self.evs.spd
+                                        );
+
+            return format!("{}{}", basicDetails, evDetails);
         }
     }
 
@@ -163,29 +199,11 @@ impl Save {
             }
         };
 
-        // Conversion from Hex-Coded Decimal
         let money = Self::getMoney(&save);
         let id = Self::getID(&save);
-
         let trainerName = Self::getName(&save);
         let trainer = Name{encoded: trainerName, text: textDecode(&trainerName)};
-
-        let mut party:  Vec<Pokemon> = Vec::new();
-
-        for creature in 0..save[PARTY_ADDR] as usize {
-            let pkmnAddress = PARTY_ADDR + 0x8 + (creature * 0x2C);
-            let nickAddress: usize = PARTY_ADDR + 0x152 + (creature * 0xB);
-
-            let mut encodedNick: [i16; 11]= [0; 11];
-            for num in 0..11 {
-                encodedNick[num] = format!("{}",save[nickAddress+num]).parse::<i16>().unwrap();
-            }
-
-            let nickname = textDecode(&encodedNick);
-
-            party.push(Pokemon::get(save[pkmnAddress] as i16, save[pkmnAddress+0x21] as i8, nickname));
-            println!("Current Pokemon: {:?}", party[creature]);
-        }
+        let party:  Vec<Pokemon> = Self::getParty(&save);
 
         return Save{trainer, money, id, party}
 
@@ -195,6 +213,12 @@ impl Save {
     pub fn print(self: Self) {
         println!("\n=== Save Info ===");
         println!("Name: {}\nPlayer ID: {}\nMoney: {}",self.trainer.text, self.id, self.money);
+        println!("=================");
+
+        println!("\n=== Party ===");
+        for pokemon in self.party {
+            println!("{}",pokemon.getDetails());
+        }
         println!("=================\n");
     }
 
@@ -220,6 +244,56 @@ impl Save {
     fn getID(save: &Vec<u8>) -> i32 {
         let stringID = format!("{:X?}{:X?}",save[ID_ADDR],save[ID_ADDR+1]);
         return i32::from_str_radix(&stringID, 16).unwrap();
+    }
+
+    fn getParty(save: &Vec<u8>) -> Vec<Pokemon> {
+        let mut party:  Vec<Pokemon> = Vec::new();
+
+        for creature in 0..save[PARTY_ADDR] as usize {
+            let pkmnAddress: usize = PARTY_ADDR + 0x8 + (creature * 0x2C);
+            let nickAddress: usize = PARTY_ADDR + NICK_OFF + (creature * 0xB);
+
+            let hpevAddress: usize = pkmnAddress + HPEV_OFF;
+            let atevAddress: usize = pkmnAddress + ATEV_OFF;
+            let deevAddress: usize = pkmnAddress + DEEV_OFF;
+            let spdevAddress: usize = pkmnAddress + SPDEV_OFF;
+            let spcevAddress: usize = pkmnAddress + SPCEV_OFF;
+
+            let mut encodedNick: [i16; 11]= [0; 11];
+            for num in 0..11 {
+                encodedNick[num] = format!("{}",save[nickAddress+num]).parse::<i16>().unwrap();
+            }
+            let nickname = textDecode(&encodedNick);
+
+            let hpev  = u16::from_str_radix(
+                                            &format!("{:X?}{:X?}",save[hpevAddress],save[hpevAddress+1]),
+                                            16
+                                        ).unwrap();
+            let atev  = u16::from_str_radix(
+                                            &format!("{:X?}{:X?}",save[atevAddress],save[atevAddress+1]),
+                                            16
+                                        ).unwrap();
+            let deev  = u16::from_str_radix(
+                                            &format!("{:X?}{:X?}",save[deevAddress],save[deevAddress+1]),
+                                            16
+                                        ).unwrap();
+            let spdev = u16::from_str_radix(
+                                        &format!("{:X?}{:X?}",save[spdevAddress],save[spdevAddress+1]),
+                                        16
+                                        ).unwrap();
+            let spcev = u16::from_str_radix(
+                                            &format!("{:X?}{:X?}",save[spcevAddress],save[spcevAddress+1]),
+                                            16
+                                        ).unwrap();
+
+        party.push(Pokemon::get(    save[pkmnAddress] as i16,
+                                    save[pkmnAddress+0x21] as i8, 
+                                    nickname, hpev, atev, deev, spdev, spcev)
+                  );
+            // println!("Current Pokemon: {:?}", party[creature]);
+        }
+
+        return party;
     }
 }
 
