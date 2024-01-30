@@ -1,9 +1,7 @@
 #![allow(non_snake_case)]
 
-// Pokemon Module
 use std::fs;
 use std::process;
-
 use crate::CreatureData::Pokemon;
 
 // General Starting Addresses
@@ -14,8 +12,10 @@ const PARTY_ADDR:   usize   = 0x2F2C;
 
 // Pokemon Data Offsets
 const NICK_OFF:     usize   = 0x152;
+const HP_OFF:       usize   = 0x01;
 const EV_OFF:       usize   = 0x11;
 const STAT_OFF:     usize   = 0x22;
+const IV_OFF:       usize   = 0x1B;
 
 #[allow(dead_code)]
 pub mod CreatureData {
@@ -138,6 +138,14 @@ pub mod CreatureData {
     }
 
     #[derive(Debug)]
+    struct IVs {
+        atk: u16,
+        def: u16,
+        spd: u16,
+        spc: u16
+    }
+
+    #[derive(Debug)]
     struct Stats {
         hp: u16,
         atk: u16,
@@ -151,26 +159,30 @@ pub mod CreatureData {
         nickname: String,
         species: Species,
         level: i8,
+        hp: i16,
         evs: EVs,
+        ivs: IVs,
         stats: Stats,
         // moves: [Move; 4],
     }
 
     impl Pokemon {
-        pub(crate) fn get(index: i16, level:i8, nickname: String, evArr: [u16;5], statArr: [u16;5]) -> Pokemon {
+        pub(crate) fn get(index: i16, level:i8, nickname: String, hp: i16, evArr: [u16;5], ivArr: [u16;4], statArr: [u16;5]) -> Pokemon {
             let species = Species::parse(index);
 
             let evs = EVs{hp: evArr[0], atk: evArr[1], def: evArr[2], spd: evArr[3], spc: evArr[4]};
+            let ivs = IVs{atk: ivArr[0], def: ivArr[1], spd: ivArr[2], spc: ivArr[3]};
             let stats = Stats{hp: statArr[0], atk: statArr[1], def: statArr[2], spd: statArr[3], spc: statArr[4]};
             
-            return Pokemon{nickname,species,level,evs,stats};
+            return Pokemon{nickname,species,level,hp,evs,ivs,stats};
         }
 
         pub(crate) fn getDetails(self) -> String{
-            let basicDetails= format!("{:15} {:15} LVL:{}\n",
+            let basicDetails= format!("{:12} {:12} LVL:{} Current HP: {}\n",
                                             self.species.name, 
                                             self.nickname, 
                                             self.level,
+                                            self.hp
                                         ); 
             let evDetails   = format!("\tHP EV: {}\n\tATK EV: {}\n\tDEF EV:{}\n\tSPD EV: {}\n\tSPCL EV: {}\n",
                                             self.evs.hp,
@@ -178,6 +190,13 @@ pub mod CreatureData {
                                             self.evs.def,
                                             self.evs.spd,
                                             self.evs.spc
+                                        );
+
+            let ivDetails   = format!("\tATK IV: {}\n\tDEF IV:{}\n\tSPD IV: {}\n\tSPCL IV: {}\n",
+                                            self.ivs.atk,
+                                            self.ivs.def,
+                                            self.ivs.spd,
+                                            self.ivs.spc
                                         );
             
             let statDetails   = format!("\tHP: {}\n\tATK: {}\n\tDEF:{}\n\tSPD: {}\n\tSPCL: {}\n",
@@ -188,7 +207,7 @@ pub mod CreatureData {
                                             self.stats.spc
                                         );
 
-            return format!("{}{}{}", basicDetails, statDetails, evDetails);
+            return format!("{}{}\n{}\n{}", basicDetails, statDetails, evDetails, ivDetails);
         }
     }
 
@@ -266,7 +285,7 @@ impl Save {
 
     /// Retrieves the trainer ID
     fn getID(save: &Vec<u8>) -> i32 {
-        let stringID = format!("{:X?}{:X?}",save[ID_ADDR],save[ID_ADDR+1]);
+        let stringID = format!("{:X}{:X}",save[ID_ADDR],save[ID_ADDR+1]);
         return i32::from_str_radix(&stringID, 16).unwrap();
     }
 
@@ -278,34 +297,57 @@ impl Save {
             let pkmnAddress: usize = PARTY_ADDR + 0x8 + (creature * 0x2C);
             let nickAddress: usize = PARTY_ADDR + NICK_OFF + (creature * 0xB);
 
+            let hp = i16::from_str_radix(
+                                                &format!("{:02X}{:02X}",save[pkmnAddress+HP_OFF],save[pkmnAddress+HP_OFF+1]), 
+                                                16
+                                                ).unwrap();
+
+            // Nickname Obtaining code
             let mut encodedNick: [i16; 11]= [0; 11];
             for num in 0..11 {
                 encodedNick[num] = format!("{}",save[nickAddress+num]).parse::<i16>().unwrap();
             }
             let nickname = textDecode(&encodedNick);
 
+            // EV Obtaining code
             let mut evs: [u16;5] = [0; 5];
             for stat in 0..5 {
                 let currAddr = pkmnAddress+EV_OFF+(stat*2);
                 evs[stat] = u16::from_str_radix(
-                                                &format!("{:X?}{:X?}",save[currAddr],save[currAddr+1]),
+                                                &format!("{:02X}{:02X}",save[currAddr],save[currAddr+1]),
                                                 16
                                             ).unwrap();
             }
 
+            // Stat Obtaining Code
             let mut stats: [u16;5] = [0; 5];
             for stat in 0..5 {
                 let currAddr = pkmnAddress+STAT_OFF+(stat*2);
                 stats[stat] = u16::from_str_radix(
-                                                &format!("{:X?}{:X?}",save[currAddr],save[currAddr+1]),
+                                                &format!("{:02X}{:02X}",save[currAddr],save[currAddr+1]),
                                                 16
                                             ).unwrap();
             }
 
-        party.push(Pokemon::get(    save[pkmnAddress] as i16,
-                                    save[pkmnAddress+0x21] as i8, 
-                                    nickname, evs, stats)
-                  );
+            // IV Obtaining Code
+            // TODO: Figure out a better way to split into fours
+            let allIVs = format!("{:08b}{:08b}",save[pkmnAddress+IV_OFF],save[pkmnAddress+IV_OFF+1]);
+            let (half, half2) = allIVs.split_at(8);
+            let ((atk, def), (spd, spc)) = (half.split_at(4), half2.split_at(4));
+            // println!("At address: {:#0X} IV: {}",pkmnAddress+IV_OFF,allIVs);
+            let ivs: [u16;4] = [
+                                    u16::from_str_radix(atk,2).unwrap(),
+                                    u16::from_str_radix(def,2).unwrap(),
+                                    u16::from_str_radix(spd,2).unwrap(),
+                                    u16::from_str_radix(spc,2).unwrap(),
+                                ];
+
+            party.push(Pokemon::get(    save[pkmnAddress] as i16,
+                                        save[pkmnAddress+0x21] as i8,
+                                        nickname,
+                                        hp, 
+                                        evs, ivs, stats)
+                    );
             // println!("Current Pokemon: {:?}", party[creature]);
         }
 

@@ -5,7 +5,7 @@ PK-Rust is a Pokemon save file editor, akin to the [PKHeX project](https://githu
 
 ### Implemented Features
 - Read trainer info (Name, ID, Money)
-- Read party data (Pokemon Species, Type, Nickname, Level, EVs)
+- Read party data (Pokemon Species, Type, Nickname, Level, EVs, IVs)
 
 ### [Planned Features](#planned-features)
 - Read [all](https://bulbapedia.bulbagarden.net/wiki/Pok%C3%A9mon_data_structure_(Generation_I)) Pokemon data
