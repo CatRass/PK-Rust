@@ -2,7 +2,7 @@
 
 use std::fs;
 use std::process;
-use crate::CreatureData::Pokemon;
+use crate::CreatureData::{Pokemon, Move};
 
 // General Starting Addresses
 const MONEY_ADDR:   usize   = 0x25F3;
@@ -13,12 +13,13 @@ const PARTY_ADDR:   usize   = 0x2F2C;
 // Pokemon Data Offsets
 const NICK_OFF:     usize   = 0x152;
 const HP_OFF:       usize   = 0x01;
+const MOVE_OFF:     usize   = 0x08;
+const PP_OFF:       usize   = 0x1D;
 const OT_OFF:       usize   = 0x0C;
 const EV_OFF:       usize   = 0x11;
 const STAT_OFF:     usize   = 0x22;
 const IV_OFF:       usize   = 0x1B;
 
-#[allow(dead_code)]
 /// Module for organising all data related to Pokemon.
 /// 
 /// This includes data such as:
@@ -26,6 +27,7 @@ const IV_OFF:       usize   = 0x1B;
 /// - Moves
 /// - Various Stats
 /// - Species
+#[allow(dead_code)]
 pub mod CreatureData {
     use std::fs;
 
@@ -82,19 +84,44 @@ pub mod CreatureData {
         }
     }
 
-    // enum Move {
-    //     /// A move will consist of its:
-    //     /// - Move ID (1 byte long)
-    //     /// - Name (String)
-    //     /// - Type
-    //     Move(i8,String,Type),
-    //     Null
-    // }
+    #[derive(Debug)]
+    pub(crate) struct Move {
+        index: u16,
+        typing: Type,
+        name: String,
+        pp: u16,
+        ppup: u8
+    }
+    impl Move {
+        /// Constructor for a Move, given an input move index
+        pub(crate) fn get(index: u16, pp: u16, ppup: u8) -> Move {
+            let moveFile = fs::read_to_string("./src/moves.pkmn").unwrap();
+            let strIndex = format!("{:03}",index);
+            let mut moveLine: &str = "No Move found";
 
-    // struct Move {
-    //     index: i16,
-    //     pp: u16
-    // }
+            for line in moveFile.lines() {
+                if line.contains(&strIndex) {
+                    moveLine = line;
+                    break;
+                }
+            }
+
+            let parsedMove: Vec<&str> = moveLine.split(" ").collect();
+            let name = parsedMove[1].to_string().replacen('+', " ", 1);
+            let typing = Type::get(&parsedMove[2].parse::<i16>().unwrap());
+
+            return Move{index,typing,name,pp,ppup};
+        }
+        /// Constructor for an empty Move slot
+        pub(crate) fn empty() -> Move {
+            return Move{index:0, typing: Type::Null, name: String::from("Null"), pp:0, ppup:0}
+        }
+        /// Returns the info on a Pokemons moves for printing
+        fn to_string(&self) -> String {
+            return format!("{} PP: {} PP Up: {}", self.name, self.pp, self.ppup);
+        }
+
+    }
 
     #[derive(Debug)]
     struct Species {
@@ -103,7 +130,6 @@ pub mod CreatureData {
         name: String,
         typing: [Type;2],
     }
-
     impl Species {
         fn parse(index: i16) -> Species {
             let speciesFile = fs::read_to_string("./src/species.pkmn").unwrap();
@@ -200,24 +226,24 @@ pub mod CreatureData {
         nickname:   String,
         species:    Species,
         level:      i8,
+        moves:      Vec<Move>,
         ot:         u16,
         hp:         i16,
         evs:        EVs,
         ivs:        IVs,
         stats:      Stats,
-        // moves: [Move; 4],
     }
 
     impl Pokemon {
         /// Constructor for a Pokemon, when being read from a save file
-        pub(crate) fn get(index: i16, level:i8, nickname: String, ot: u16, hp: i16, evArr: [u16;5], ivArr: [u16;4], statArr: [u16;5]) -> Pokemon {
+        pub(crate) fn get(index: i16, level:i8, nickname: String, moves: Vec<Move>, ot: u16, hp: i16, evArr: [u16;5], ivArr: [u16;4], statArr: [u16;5]) -> Pokemon {
             let species = Species::parse(index);
 
             let evs = EVs{hp: evArr[0], atk: evArr[1], def: evArr[2], spd: evArr[3], spc: evArr[4]};
             let ivs = IVs{atk: ivArr[0], def: ivArr[1], spd: ivArr[2], spc: ivArr[3]};
             let stats = Stats{hp: statArr[0], atk: statArr[1], def: statArr[2], spd: statArr[3], spc: statArr[4]};
             
-            return Pokemon{nickname, species, level, ot, hp, evs, ivs, stats};
+            return Pokemon{nickname, species, level, moves, ot, hp, evs, ivs, stats};
         }
 
         /// Returns a string with all of the Pokemon's details, such as:
@@ -240,7 +266,15 @@ pub mod CreatureData {
             let ivDetails   = self.ivs.to_string();
             let statDetails   = self.stats.to_string();
 
-            return format!("{}{}\n{}\n{}", basicDetails, statDetails, evDetails, ivDetails);
+            let moves: Vec<String> =  vec![
+                                                self.moves[0].to_string(),
+                                                self.moves[1].to_string(),
+                                                self.moves[2].to_string(),
+                                                self.moves[3].to_string(),
+                                            ];
+            let moveDetails = format!("\t{}\n\t{}\n\t{}\n\t{}\n\n",moves[0], moves[1], moves[2], moves[3]);
+
+            return format!("{}{}\n{}\n{}\n{}", basicDetails, moveDetails, statDetails, evDetails, ivDetails);
         }
     }
 
@@ -265,7 +299,7 @@ impl Save {
         let save = match fs::read(file) {
             Ok(result)                => result,
             Err(error)                  => match error.kind() {
-                std::io::ErrorKind::NotFound   => {eprintln!("File does not exist"); process::exit(1);}
+                std::io::ErrorKind::NotFound   => {eprintln!("Save: {file} does not exist"); process::exit(1);}
                 _                              => {eprintln!("Error: {}",error.kind()); process::exit(1);}
             }
         };
@@ -273,7 +307,9 @@ impl Save {
         let money = Self::getMoney(&save);
         let id = Self::getTrainerID(&save);
         let party:  Vec<Pokemon> = Self::getParty(&save);
-        let trainer = Name{encoded: Self::getName(&save), text: textDecode(&Self::getName(&save))};
+        let trainer = Name{   encoded: Self::getName(&save), 
+                                    text: textDecode(&Self::getName(&save))
+                                };
 
         return Save{trainer, money, id, party}
 
@@ -330,6 +366,8 @@ impl Save {
             let hp = Self::getPokemonHP(&save,&pkmnAddress);
             // Nickname Obtaining code
             let nickname = Self::getPokemonNick(&save, &nickAddress);
+            // Moves Obtaining code
+            let moves = Self::getPokemonMoves(&save,&pkmnAddress);
             // EV Obtaining code
             let evs: [u16;5] = Self::getPokemonEVs(&save,&pkmnAddress);
             // Stat Obtaining Code
@@ -342,6 +380,7 @@ impl Save {
             party.push(Pokemon::get(    save[pkmnAddress] as i16,
                                         save[pkmnAddress+0x21] as i8,
                                         nickname,
+                                        moves,
                                         ot,
                                         hp, 
                                         evs, ivs, stats)
@@ -367,6 +406,27 @@ impl Save {
             &format!("{:02X}{:02X}",save[currAddr+HP_OFF],save[currAddr+HP_OFF+1]), 
             16
             ).unwrap();
+    }
+
+    /// Function for retrieving data about Pokemons moves.
+    fn getPokemonMoves(save: &Vec<u8>, currAddr: &usize) -> Vec<Move>{
+        let mut returnVec: Vec<Move> = Vec::new();
+        let moveAddr = currAddr + MOVE_OFF;
+
+        for moves in 0..4 {
+            let moveIndex = save[moveAddr+moves] as u16;
+            let ppStr = format!("{:08b}",save[currAddr+PP_OFF+moves]);
+            let (ppUp,pp) = ppStr.split_at(2);
+            let currPP = u16::from_str_radix(pp, 2).unwrap();
+            let currPPUp = u8::from_str_radix(ppUp, 2).unwrap();
+            if moveIndex == 0 {
+                returnVec.push(Move::empty());
+            } else {
+                returnVec.push(Move::get(moveIndex, currPP, currPPUp));
+            }
+        }
+
+        return returnVec;
     }
 
     /// Function for retrieving a Pokemons Nickname.
