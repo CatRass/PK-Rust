@@ -5,20 +5,30 @@ use std::process;
 use crate::CreatureData::{Pokemon, Move};
 
 // General Starting Addresses
-const MONEY_ADDR:   usize   = 0x25F3;
-const ID_ADDR:      usize   = 0x2605;
-const NAME_ADDR:    usize   = 0x2598;
-const PARTY_ADDR:   usize   = 0x2F2C;
+const MONEY_ADDR:       usize   = 0x25F3;
+const ID_ADDR:          usize   = 0x2605;
+const NAME_ADDR:        usize   = 0x2598;
+const PARTY_ADDR:       usize   = 0x2F2C;
+const PC_ADDR:          usize   = 0x4000;
+
+// PC Offsets
+
+/// Pokemon Species Index
+const PC_PKMN_OFF:      usize   = 0x16;
+/// Original Trainer Name
+const PC_TRAINER_OFF:   usize   = 0x2AA;
+/// Pokemon Nickname Offset
+const PC_NICK_OFF:      usize   = 0x386;
 
 // Pokemon Data Offsets
-const NICK_OFF:     usize   = 0x152;
-const HP_OFF:       usize   = 0x01;
-const MOVE_OFF:     usize   = 0x08;
-const PP_OFF:       usize   = 0x1D;
-const OT_OFF:       usize   = 0x0C;
-const EV_OFF:       usize   = 0x11;
-const STAT_OFF:     usize   = 0x22;
-const IV_OFF:       usize   = 0x1B;
+const NICK_OFF:         usize   = 0x152;
+const HP_OFF:           usize   = 0x01;
+const MOVE_OFF:         usize   = 0x08;
+const PP_OFF:           usize   = 0x1D;
+const OT_OFF:           usize   = 0x0C;
+const EV_OFF:           usize   = 0x11;
+const STAT_OFF:         usize   = 0x22;
+const IV_OFF:           usize   = 0x1B;
 
 /// Module for organising all data related to Pokemon.
 /// 
@@ -30,6 +40,11 @@ const IV_OFF:       usize   = 0x1B;
 #[allow(dead_code)]
 pub mod CreatureData {
     use std::fs;
+
+    #[derive(Debug)]
+    enum StatusCondition {
+
+    }
 
     #[derive(Debug)]
     enum Type {
@@ -289,7 +304,10 @@ pub struct Save {
     trainer: Name,
     money: u32,
     id: i32,
-    party: Vec<Pokemon>
+    party: Vec<Pokemon>,
+    // Each save file has 12 boxes, which hold 20 pokemon each
+    // Pokemon Box info here: https://bulbapedia.bulbagarden.net/wiki/Pok%C3%A9mon_Storage_System
+    pc: Vec<Vec<Pokemon>>
 }
 
 impl Save {
@@ -304,6 +322,8 @@ impl Save {
             }
         };
 
+        let pc = Self::getPCBoxes(&save);
+
         let money = Self::getMoney(&save);
         let id = Self::getTrainerID(&save);
         let party:  Vec<Pokemon> = Self::getParty(&save);
@@ -311,7 +331,7 @@ impl Save {
                                     text: textDecode(&Self::getName(&save))
                                 };
 
-        return Save{trainer, money, id, party}
+        return Save{trainer, money, id, party, pc}
 
     }
 
@@ -390,6 +410,54 @@ impl Save {
         }
 
         return party;
+    }
+
+    /// Retrieves all of the players PC boxes
+    fn getPCBoxes(save: &Vec<u8>) -> Vec<Vec<Pokemon>>{
+        let mut boxes: Vec<Vec<Pokemon>> = Vec::new();
+        for pcBox in 0..12 as usize {
+            let mut currBox: Vec<Pokemon> = Vec::new();
+            // The boxes first two bytes
+            let currAddr = PC_ADDR+(0x462*pcBox)%0x1A4C+(0x2000*(pcBox/6));
+            let pkmnInBox = save[currAddr] as usize;
+            // println!("Pokemon in box {} at {:X}: {}",pcBox+1,currAddr,pkmnInBox);
+
+            for creature in 0..pkmnInBox {
+                let pkmnAddress = currAddr + PC_PKMN_OFF + (0x21 * creature);
+                let nickAddress = currAddr + PC_NICK_OFF+ (creature*0xB);
+
+                let currSpecies: i16 = save[pkmnAddress] as i16;
+                let hp = Self::getPokemonHP(&save, &pkmnAddress);
+                let ot = Self::getPokemonOTID(&save, &pkmnAddress);
+                let moves = Self::getPokemonMoves(&save,&pkmnAddress);
+                let evs: [u16;5] = Self::getPokemonEVs(&save,&pkmnAddress);
+                let ivs: [u16;4] = Self::getPokemonIVs(&save,&pkmnAddress);
+                let level: i8 = save[pkmnAddress+0x03] as i8;
+
+                // TODO: Finish this so it uses the box trick to calculate the proper stats.
+                // https://bulbapedia.bulbagarden.net/wiki/Box_trick
+                let stats: [u16;5] = [0,0,0,0,0];
+
+                let currPkmn = Pokemon::get(currSpecies, 
+                                                        level, 
+                                                        Self::getPokemonNick(&save, &nickAddress), 
+                                                        moves, 
+                                                        ot, 
+                                                        hp, 
+                                                        evs, 
+                                                        ivs, 
+                                                        stats);
+                
+                currBox.push(currPkmn);
+
+                // println!("\tSpecies in Box {} is {}", pcBox+1, Self::getPokemonNick(&save, &nickAddress));
+            }
+
+            boxes.push(currBox);
+        }
+
+        // println!("{:#?}",boxes);
+        return boxes;
     }
 
     /// Function for retrieving a Pokemons Original Trainers ID
