@@ -26,6 +26,7 @@ const HP_OFF:           usize   = 0x01;
 const MOVE_OFF:         usize   = 0x08;
 const PP_OFF:           usize   = 0x1D;
 const OT_OFF:           usize   = 0x0C;
+const OTN_OFF:          usize   = 0x110;
 const EV_OFF:           usize   = 0x11;
 const STAT_OFF:         usize   = 0x22;
 const IV_OFF:           usize   = 0x1B;
@@ -242,7 +243,10 @@ pub mod CreatureData {
         species:    Species,
         level:      i8,
         moves:      Vec<Move>,
+        /// Original Trainer ID
         ot:         u16,
+        /// Original Trainer Name
+        otn:        String,
         hp:         i16,
         evs:        EVs,
         ivs:        IVs,
@@ -251,14 +255,14 @@ pub mod CreatureData {
 
     impl Pokemon {
         /// Constructor for a Pokemon, when being read from a save file
-        pub(crate) fn get(index: i16, level:i8, nickname: String, moves: Vec<Move>, ot: u16, hp: i16, evArr: [u16;5], ivArr: [u16;4], statArr: [u16;5]) -> Pokemon {
+        pub(crate) fn get(index: i16, level:i8, nickname: String, moves: Vec<Move>, ot: u16, otn: String, hp: i16, evArr: [u16;5], ivArr: [u16;4], statArr: [u16;5]) -> Pokemon {
             let species = Species::parse(index);
 
             let evs = EVs{hp: evArr[0], atk: evArr[1], def: evArr[2], spd: evArr[3], spc: evArr[4]};
             let ivs = IVs{atk: ivArr[0], def: ivArr[1], spd: ivArr[2], spc: ivArr[3]};
             let stats = Stats{hp: statArr[0], atk: statArr[1], def: statArr[2], spd: statArr[3], spc: statArr[4]};
             
-            return Pokemon{nickname, species, level, moves, ot, hp, evs, ivs, stats};
+            return Pokemon{nickname, species, level, moves, ot, otn, hp, evs, ivs, stats};
         }
 
         /// Returns a string with all of the Pokemon's details, such as:
@@ -396,12 +400,14 @@ impl Save {
             let ivs: [u16;4] = Self::getPokemonIVs(&save,&pkmnAddress);
             // Original Trainer Obtaining Code
             let ot = Self::getPokemonOTID(&save,&pkmnAddress);
+            let otn = Self::getPokemonOTName(&save, &(pkmnAddress+OTN_OFF));
 
             party.push(Pokemon::get(    save[pkmnAddress] as i16,
                                         save[pkmnAddress+0x21] as i8,
                                         nickname,
                                         moves,
                                         ot,
+                                        otn,
                                         hp, 
                                         evs, ivs, stats)
                     );
@@ -415,10 +421,11 @@ impl Save {
     /// Retrieves all of the players PC boxes
     fn getPCBoxes(save: &Vec<u8>) -> Vec<Vec<Pokemon>>{
         let mut boxes: Vec<Vec<Pokemon>> = Vec::new();
+
         for pcBox in 0..12 as usize {
             let mut currBox: Vec<Pokemon> = Vec::new();
             // The boxes first two bytes
-            let currAddr = PC_ADDR+(0x462*pcBox)%0x1A4C+(0x2000*(pcBox/6));
+            let currAddr = PC_ADDR + (0x462*pcBox)%0x1A4C + (0x2000*(pcBox/6));
             let pkmnInBox = save[currAddr] as usize;
             // println!("Pokemon in box {} at {:X}: {}",pcBox+1,currAddr,pkmnInBox);
 
@@ -430,9 +437,12 @@ impl Save {
                 let hp = Self::getPokemonHP(&save, &pkmnAddress);
                 let ot = Self::getPokemonOTID(&save, &pkmnAddress);
                 let moves = Self::getPokemonMoves(&save,&pkmnAddress);
+                let nickname = Self::getPokemonNick(&save, &nickAddress);
                 let evs: [u16;5] = Self::getPokemonEVs(&save,&pkmnAddress);
                 let ivs: [u16;4] = Self::getPokemonIVs(&save,&pkmnAddress);
                 let level: i8 = save[pkmnAddress+0x03] as i8;
+                let otn = Self::getPokemonOTName(&save, &(currAddr+PC_TRAINER_OFF+(creature*0xB)));
+                println!("Original Trainer name at: {:X}",currAddr+PC_TRAINER_OFF+(creature*0xB));
 
                 // TODO: Finish this so it uses the box trick to calculate the proper stats.
                 // https://bulbapedia.bulbagarden.net/wiki/Box_trick
@@ -440,17 +450,18 @@ impl Save {
 
                 let currPkmn = Pokemon::get(currSpecies, 
                                                         level, 
-                                                        Self::getPokemonNick(&save, &nickAddress), 
+                                                        nickname, 
                                                         moves, 
                                                         ot, 
+                                                        otn,
                                                         hp, 
                                                         evs, 
                                                         ivs, 
-                                                        stats);
+                                                        stats
+                                                    );
                 
                 currBox.push(currPkmn);
 
-                // println!("\tSpecies in Box {} is {}", pcBox+1, Self::getPokemonNick(&save, &nickAddress));
             }
 
             boxes.push(currBox);
@@ -466,6 +477,20 @@ impl Save {
             &format!("{:02X}{:02X}", save[currAddr+OT_OFF],save[currAddr+OT_OFF+1]),
             16
         ).unwrap();
+    }
+
+    /// Function for retrieving a Pokemons Original Trainers Name
+    /// 
+    /// **Note**: There is a current bug where extra "garbage data" is added to OT Names.
+    /// This most likely to do with the function textDecode note taking into account control characters.
+    fn getPokemonOTName(save: &Vec<u8>, currAddr: &usize) -> String {
+        let mut encodedName: [i16;11] = [0;11];
+
+        for char in 0..11 {
+            encodedName[char] = format!("{}",save[currAddr+char]).parse::<i16>().unwrap();
+        }
+
+        return textDecode(&encodedName);
     }
 
     /// Function for retrieving the Pokemons current Health Points
