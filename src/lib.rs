@@ -1,6 +1,7 @@
 #![allow(non_snake_case)]
 
 use std::fs;
+use std::path::PathBuf;
 use std::process;
 use crate::CreatureData::{Pokemon, Move};
 
@@ -48,6 +49,7 @@ pub mod CreatureData {
     }
 
     #[derive(Debug)]
+    #[derive(serde::Serialize, serde::Deserialize)]
     enum Type {
         Normal      = 0,
         Fire        = 1,
@@ -101,6 +103,7 @@ pub mod CreatureData {
     }
 
     #[derive(Debug)]
+    #[derive(serde::Serialize, serde::Deserialize)]
     pub(crate) struct Move {
         index: u16,
         typing: Type,
@@ -140,6 +143,7 @@ pub mod CreatureData {
     }
 
     #[derive(Debug)]
+    #[derive(serde::Serialize, serde::Deserialize)]
     struct Species {
         index: i16,
         pokedex: i16,
@@ -177,6 +181,7 @@ pub mod CreatureData {
     }
 
     #[derive(Debug)]
+    #[derive(serde::Serialize, serde::Deserialize)]
     struct EVs {
         hp: u16,
         atk: u16,
@@ -198,6 +203,7 @@ pub mod CreatureData {
     }
 
     #[derive(Debug)]
+    #[derive(serde::Serialize, serde::Deserialize)]
     struct Stats {
         hp: u16,
         atk: u16,
@@ -219,6 +225,7 @@ pub mod CreatureData {
     }
 
     #[derive(Debug)]
+    #[derive(serde::Serialize, serde::Deserialize)]
     struct IVs {
         atk: u16,
         def: u16,
@@ -238,6 +245,7 @@ pub mod CreatureData {
     }
 
     #[derive(Debug)]
+    #[derive(serde::Serialize, serde::Deserialize)]
     pub(crate) struct Pokemon {
         nickname:   String,
         species:    Species,
@@ -274,7 +282,7 @@ pub mod CreatureData {
         /// - EVs
         /// - IVs
         /// - Stats
-        pub(crate) fn getDetails(self) -> String{
+        pub(crate) fn getDetails(&self) -> String{
             let basicDetails= format!("{:12} {:12} LVL:{} Current HP: {}\n",
                                             self.species.name, 
                                             self.nickname, 
@@ -299,13 +307,10 @@ pub mod CreatureData {
 
 }
 
-struct Name {
-    encoded: [i16; 11],
-    text: String
-}
-
+#[derive(Debug)]
+#[derive(serde::Serialize, serde::Deserialize)]
 pub struct Save {
-    trainer: Name,
+    trainer: String,
     money: u32,
     id: i32,
     party: Vec<Pokemon>,
@@ -315,13 +320,22 @@ pub struct Save {
 }
 
 impl Save {
-    
-    pub fn load(file: &str) -> Save{
+
+    pub fn new() -> Save {
+        return Save{    trainer: String::from("Null"),
+                        money: 0,
+                        id: 0,
+                        party: Vec::new(),
+                        pc: Vec::new()
+                    }
+    } 
+
+    pub fn load(file: &PathBuf) -> Save{
 
         let save = match fs::read(file) {
             Ok(result)                => result,
             Err(error)                  => match error.kind() {
-                std::io::ErrorKind::NotFound   => {eprintln!("Save: {file} does not exist"); process::exit(1);}
+                std::io::ErrorKind::NotFound   => {eprintln!("Save: {} does not exist",file.to_str().unwrap()); process::exit(1);}
                 _                              => {eprintln!("Error: {}",error.kind()); process::exit(1);}
             }
         };
@@ -331,23 +345,29 @@ impl Save {
         let money = Self::getMoney(&save);
         let id = Self::getTrainerID(&save);
         let party:  Vec<Pokemon> = Self::getParty(&save);
-        let trainer = Name{   encoded: Self::getName(&save), 
-                                    text: textDecode(&Self::getName(&save))
-                                };
+        let trainer = textDecode(&Self::getName(&save));
 
         return Save{trainer, money, id, party, pc}
 
     }
 
+    pub fn to_string(&self) -> String {
+        return format!("{:?}",self);
+    }
+
+    pub fn to_json(&self) -> String {
+        return serde_json::to_string(&self).unwrap();
+    }
+
     /// Print the save file data to terminal
-    pub fn print(self) {
+    pub fn print(&self) {
         println!("\n=== Save Info ===");
-        println!("Name: {}\nPlayer ID: {}\nMoney: {}",self.trainer.text, self.id, self.money);
+        println!("Name: {}\nPlayer ID: {}\nMoney: {}",self.trainer, self.id, self.money);
         println!("=================");
 
         println!("\n=== Party ===");
-        for pokemon in self.party {
-            println!("{}",pokemon.getDetails());
+        for pokemon in 0..5 {
+            println!("{}",&self.party[pokemon].getDetails());
         }
         println!("=================\n");
     }
@@ -442,7 +462,7 @@ impl Save {
                 let ivs: [u16;4] = Self::getPokemonIVs(&save,&pkmnAddress);
                 let level: i8 = save[pkmnAddress+0x03] as i8;
                 let otn = Self::getPokemonOTName(&save, &(currAddr+PC_TRAINER_OFF+(creature*0xB)));
-                println!("Original Trainer name at: {:X}",currAddr+PC_TRAINER_OFF+(creature*0xB));
+                // println!("Original Trainer name at: {:X}",currAddr+PC_TRAINER_OFF+(creature*0xB));
 
                 // TODO: Finish this so it uses the box trick to calculate the proper stats.
                 // https://bulbapedia.bulbagarden.net/wiki/Box_trick

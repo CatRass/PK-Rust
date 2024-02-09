@@ -1,0 +1,20 @@
+#party {
+    background-color: rgb(226, 52, 52);
+    /* display: flex; */
+    display: none;
+    width: 50vw;
+}
+
+label {
+    user-select: none;
+}
+
+.creatureBox {
+    margin: 1rem;
+    width: calc(50vw/6);
+}
+
+#trainerDetails {
+    display: none;
+    width: 50vw;
+}
