@@ -114,7 +114,7 @@ pub mod CreatureData {
     impl Move {
         /// Constructor for a Move, given an input move index
         pub(crate) fn get(index: u16, pp: u16, ppup: u8) -> Move {
-            let moveFile = fs::read_to_string("./src/moves.pkmn").unwrap();
+            let moveFile = fs::read_to_string("./data/moves.pkmn").unwrap();
             let strIndex = format!("{:03}",index);
             let mut moveLine: &str = "No Move found";
 
@@ -152,7 +152,7 @@ pub mod CreatureData {
     }
     impl Species {
         fn parse(index: i16) -> Species {
-            let speciesFile = fs::read_to_string("./src/species.pkmn").unwrap();
+            let speciesFile = fs::read_to_string("./data/species.pkmn").unwrap();
             let mut parsedSpecies: &str = "No Pokemon found";
 
             let hexIndex = format!("0x{:02X?}",index);

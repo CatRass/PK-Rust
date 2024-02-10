@@ -47,8 +47,8 @@
         "signingIdentity": null
       },
       "resources": [
-        "./src/species.pkmn",
-        "./src/moves.pkmn"
+        "./data/species.pkmn",
+        "./data/moves.pkmn"
       ],
       "shortDescription": "",
       "targets": "all",

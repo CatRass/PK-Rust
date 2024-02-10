@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<script src="./scripts/save-script.js"></script>
-<link rel="stylesheet" href="./style.css">
 
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <script src="./scripts/save-script.js"></script>
+    <link rel="stylesheet" href="./style.css">
+
     <title>PK-Rust</title>
   </head>
 
@@ -20,38 +22,67 @@
         <button type="submit">Test Save</button>
     </form>
 
-    <div id="trainerDetails">
-        <label for="trainerName">Trainer Name</label>
-        <input  id="trainerName"    type="text" maxlength="11">
-        <br>
-        <label for="trainerID">Trainer ID</label>
-        <input  id="trainerID"      type="number" min="0" max="65535">
-        <br>
-        <label for="trainerMoney">Trainer Money</label>
-        <input  id="trainerMoney"   type="number">
+    <div id="content">
+        <div id="saveDisplay">
+            <div id="trainerDetails">
+                <label for="trainerName">Trainer Name</label>
+                <input  id="trainerName"    type="text" maxlength="11">
+                <br>
+                <label for="trainerID">Trainer ID</label>
+                <input  id="trainerID"      type="number" min="0" max="65535">
+                <br>
+                <label for="trainerMoney">Trainer Money</label>
+                <input  id="trainerMoney"   type="number">
+            </div>
+    
+            <div id="party">
+                <div class="creatureBox" id="1">
+                    <button class="creatureSelect" id="1">
+                        <img class="creature"></img>
+                    </button>
+                </div>
+                <div class="creatureBox" id="2">
+                    <button class="creatureSelect" id="2">
+                        <img class="creature"></img>
+                    </button>
+                </div>
+                <div class="creatureBox" id="3">
+                    <button class="creatureSelect" id="3">
+                        <img class="creature"></img>
+                    </button>
+                </div>
+                <div class="creatureBox" id="4">
+                    <button class="creatureSelect" id="4">
+                        <img class="creature"></img>
+                    </button>
+                </div>
+                <div class="creatureBox" id="5">
+                    <button class="creatureSelect" id="5">
+                        <img class="creature"></img>
+                    </button>
+                </div>
+                <div class="creatureBox" id="6">
+                    <button class="creatureSelect"  id="6">
+                        <img class="creature"></img>
+                    </button>
+                </div>
+            </div>
+        </div>
+    
+        <div id="saveEditor">
+            <div id="pokemon">
+                <p id="name"></p>
+                <p id="level"></p>
+                <div id="moves">
+                    <div id="move-1"></div>
+                    <div id="move-2"></div>
+                    <div id="move-3"></div>
+                    <div id="move-4"></div>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <div id="party">
-        <div class="creatureBox" id="1">
-            <img class="details"></img>
-        </div>
-        <div class="creatureBox" id="2">
-            <img class="details"></img>
-        </div>
-        <div class="creatureBox" id="3">
-            <img class="details"></img>
-        </div>
-        <div class="creatureBox" id="4">
-            <img class="details"></img>
-        </div>
-        <div class="creatureBox" id="5">
-            <img class="details"></img>
-        </div>
-        <div class="creatureBox" id="6">
-            <img class="details"></img>
-        </div>
-    </div>
-
+    
   </body>
 
 </html>

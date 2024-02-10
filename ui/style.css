@@ -1,8 +1,19 @@
+#content {
+    display: grid;
+    grid-template-columns: 45vw, 45vw
+}
+
+#saveDisplay {
+    grid-column: 1;
+    width: 45vw;
+}
+
 #party {
-    background-color: rgb(226, 52, 52);
+    /* background-color: rgb(226, 52, 52); */
     /* display: flex; */
     display: none;
-    width: 50vw;
+    
+    width: 45vw;
 }
 
 label {
@@ -10,11 +21,60 @@ label {
 }
 
 .creatureBox {
-    margin: 1rem;
-    width: calc(50vw/6);
+    width: calc(45vw/6);
+    height: calc(45vw/6);
+}
+
+.creature {
+    /* user-select: none; */
+    width: calc(45vw/6);
+    height: calc(45vw/6);
+}
+
+.creatureSelect {
+    width: calc(45vw/6);
 }
 
 #trainerDetails {
     display: none;
-    width: 50vw;
+    width: 45vw;
+}
+
+/* =================================================== */
+
+#saveEditor {
+    display: none;
+    grid-column: 2;
+    width: 45vw;
+}
+
+#pokemon{
+    margin: auto;
+}
+
+#moves {
+    display: grid;
+    grid-template-columns: 25vw, 25vw;
+    grid-template-rows: auto auto;
+}
+
+#move-1 {
+    grid-column: 1;
+    grid-row: 1;
+    background: red;
+}
+#move-2 {
+    grid-column: 2;
+    grid-row: 1;
+    background: green;
+}
+#move-3 {
+    grid-column: 1;
+    grid-row: 2;
+    background: blue;
+}
+#move-4 {
+    grid-column: 2;
+    grid-row: 2;
+    background: yellow;
 }
