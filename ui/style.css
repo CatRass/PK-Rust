@@ -9,8 +9,6 @@
 }
 
 #party {
-    /* background-color: rgb(226, 52, 52); */
-    /* display: flex; */
     display: none;
     
     width: 45vw;
@@ -29,6 +27,7 @@ label {
     /* user-select: none; */
     width: calc(45vw/6);
     height: calc(45vw/6);
+    margin: auto;
 }
 
 .creatureSelect {

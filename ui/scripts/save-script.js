@@ -3,15 +3,30 @@ const { invoke } = window.__TAURI__.tauri
 
 let jsonSave;
 
+async function pkmnSpriteCorrection(pkmnName) {
+    if (pkmnName == "nidoran♀") {
+        return "nidoran-f"
+    } else if (pkmnName == "nidoran♂"){
+        return "nidoran-m"
+    } else {
+        return pkmnName
+    };
+}
+
 async function loadSaveFile() {
-    jsonSave = JSON.parse(await invoke("getSaveFile"));
-    console.log(jsonSave);
+
+    // A temporary save variable, so jsonSave doesn't get poisoned 
+    // upon user closing the file select option
+    let tempSave = JSON.parse(await invoke("getSaveFile"));
+    console.log(tempSave);
 
     // If the user has not selected a save file, the JSON
     // data returned will just be of the id being -1
-    if (jsonSave.id == -1) {
+    if (tempSave.id == -1) {
         console.log("User didn't select a save file")
     } else {
+        document.querySelector("#saveEditor").style.display = "none";
+        jsonSave = tempSave;
         let trainerDiv = document.querySelector("#trainerDetails")
 
         trainerDiv.style.display = "block";
@@ -23,7 +38,7 @@ async function loadSaveFile() {
         for (let i=0; i<6; i++) {
             let currElement = document.getElementsByClassName("creatureBox")[i];
             let currDetails = currElement.getElementsByClassName("creature")[0];
-            currDetails.removeAttribute('src');
+            currDetails.src = "assets/creature-sprites/blank.png";
         }
 
         // Display Current Party
@@ -32,7 +47,8 @@ async function loadSaveFile() {
             let currElement = document.getElementsByClassName("creatureBox")[creature];
             let currDetails = currElement.getElementsByClassName("creature")[0];
 
-            let pkmnName = jsonSave.party[creature].species.name.toLowerCase();
+            let pkmnName = await pkmnSpriteCorrection(jsonSave.party[creature].species.name.toLowerCase());
+  
             console.log("Currently loading: " + pkmnName);
             currDetails.src = "assets/creature-sprites/"+pkmnName+".png";
 
@@ -53,7 +69,12 @@ async function displayCreature(id) {
     let lvlDisplay = document.querySelector("#level");
     let movesDisplay = document.getElementById("moves");
 
-    nameDisplay.textContent = currPokemon.nickname;
+    let pkmnImage = document.getElementById("displayPkmn");
+    let pkmnName = await pkmnSpriteCorrection(jsonSave.party[id-1].species.name.toLowerCase());
+    console.log("Currently loading: " + pkmnName);
+    pkmnImage.src = "assets/creature-sprites/"+pkmnName+".png";
+
+    nameDisplay.value = currPokemon.nickname;
     lvlDisplay.textContent = "LVL " + currPokemon.level;
 
     for (move in currPokemon.moves) {
@@ -80,7 +101,7 @@ window.addEventListener("DOMContentLoaded", () => {
     let creatureButtons = document.querySelectorAll(".creatureSelect");
     creatureButtons.forEach((creature) => {
         creature.addEventListener("click", (e) => {
-            // e.preventDefault();
+            e.preventDefault();
             displayCreature(creature.id);;
         });
     });
