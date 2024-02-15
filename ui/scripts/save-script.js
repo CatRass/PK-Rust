@@ -81,7 +81,18 @@ async function displayCreature(id) {
         let moveId = Number(move)+1;
         let currMove = movesDisplay.querySelector("#move-"+moveId);
 
-        currMove.innerHTML = currPokemon.moves[move].name;
+        let moveName = currPokemon.moves[move].name;
+        let moveTyping = currPokemon.moves[move].typing;
+
+        if (moveName == "Null") {
+            currMove.style.display = "none";
+        } else {
+            currMove.style.display = "block";
+        }
+        currMove.innerHTML = moveName;
+        
+        console.log(moveTyping);
+        currMove.style.background = "var(--"+moveTyping+")";
     };
 
     document.querySelector("#saveEditor").style.display = "flex";

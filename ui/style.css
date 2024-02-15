@@ -1,3 +1,24 @@
+:root {
+    --Normal: #A8A77A;
+    --Fire: #EE8130;
+    --Fighting: #C22E28;
+    --Water: #6390F0;
+    --Flying: #A98FF3;
+    --Grass: #7AC74C;
+    --Poison: #A33EA1;
+    --Electric: #F7D02C;
+    --Ground: #E2BF65;
+    --Psychic: #F95587;
+    --Rock: #B6A136;
+    --Ice: #96D9D6;
+    --Bug: #A6B91A;
+    --Dragon: #6F35FC;
+    --Ghost: #735797;
+    --Dark: #705746;
+    --Steel: #B7B7CE;
+    --Fairy: #D685AD;
+  }
+
 #content {
     display: grid;
     grid-template-columns: 45vw, 45vw
@@ -55,6 +76,10 @@ label {
     display: grid;
     grid-template-columns: 25vw, 25vw;
     grid-template-rows: auto auto;
+}
+
+.moveBox {
+    margin: 1vw;
 }
 
 #move-1 {

@@ -8,7 +8,6 @@ use tauri::api::dialog::blocking::FileDialogBuilder;
 use std::sync::Mutex;
 
 #[tauri::command]
-/// **TODO**: Fix the Mutex horribleness
 fn getSaveFile(saveState: State::<Mutex<Option<PKRust::Save>>>) -> String {
         
     // **TODO**: Get proper error handling on this
