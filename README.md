@@ -1,16 +1,20 @@
 <!-- [![Kingler](https://img.pokemondb.net/sprites/lets-go-pikachu-eevee/normal/kingler.png)](https://pokemondb.net/pokedex/kingler)  -->
 
-## PK-Rust: Pokemon Save File Viewer and Editor  
-**Note: This project is still a work in progress, and is not completed yet. For a list of features, read [here](https://github.com/CatRass/PK-Rust#planned-features)**
+## Pokémon Save File Viewer and Editor
+![in-dev](https://img.shields.io/badge/In%20Development-8A2BE2)\
+![rust](https://img.shields.io/badge/Made%20With%20Rust-red?logo=rust)
+![tauri](https://img.shields.io/badge/Made%20With%20Tauri-FFC131?logo=tauri&logoColor=f5f5f5)
 
-PK-Rust is a Pokemon save file editor, akin to the [PKHeX project](https://github.com/kwsch/PKHeX). Currently it is being developed to read and write to Gen I saves, but support for further generations is planned.
+PK-Rust is a Pokémon save file editor, similar to the [PKHeX project](https://github.com/kwsch/PKHeX). While it isn't finished, it aims to be fully capable of reading, modifying Generation 1 save files in their entirety, and not just your Pokémon.
 
-### Implemented Features
-- Read trainer info (Name, ID, Money)
-- Read party data (Pokemon Species, Type, Nickname, Level, EVs, IVs)
+PK-Rust will also aim to not allow users to create "illegal" Pokémon.
 
-### [Planned Features](#planned-features)
-- Read [all](https://bulbapedia.bulbagarden.net/wiki/Pok%C3%A9mon_data_structure_(Generation_I)) Pokemon data
-- Read [all](https://bulbapedia.bulbagarden.net/wiki/Save_data_structure_(Generation_I)) save data
-- Write all aforementioned data
-- Check all data changes to be valid
+All Pokémon names, images and data are property of the Pokémon Company, Nintendo and Game Freak.
+
+### Progress
+Completion percentages are an estimate for now, but I'll tally everything up and maybe put it on a kanban board for better tracking.
+| Feature | Progress | Details |
+|---------|----------|---------|
+| Save Reading| ~**70%** | What's left: <li>Reading Hall of Fame<li>Issue [#1](https://github.com/CatRass/PK-Rust/issues/1) <li> Reading position data |
+| Save Writing| **0%** | Have not started save file writing |
+| Front End | ~**5%** | What's been done: <li> Showing basic trainer info (money, name, trainer ID) <li> Showing party <li> Selectable party Pokémon, with display of level and moves <li> Data transfer from back end|
