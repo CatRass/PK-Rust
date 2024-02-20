@@ -17,7 +17,7 @@
     --Dark: #705746;
     --Steel: #B7B7CE;
     --Fairy: #D685AD;
-  }
+}
 
 #content {
     display: grid;
@@ -31,7 +31,6 @@
 
 #party {
     display: none;
-    
     width: 45vw;
 }
 
@@ -60,6 +59,7 @@ label {
     width: 45vw;
 }
 
+
 /* =================================================== */
 
 #saveEditor {
@@ -80,6 +80,7 @@ label {
 
 .moveBox {
     margin: 1vw;
+    user-select: none;
 }
 
 #move-1 {

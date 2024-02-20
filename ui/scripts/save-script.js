@@ -2,6 +2,7 @@
 const { invoke } = window.__TAURI__.tauri
 
 let jsonSave;
+let currentBox = 0;
 
 async function pkmnSpriteCorrection(pkmnName) {
     if (pkmnName == "nidoran♀") {
@@ -53,8 +54,36 @@ async function loadSaveFile() {
             currDetails.src = "assets/creature-sprites/"+pkmnName+".png";
 
         }
-
         window.party.style.display = "flex";
+
+        // Display Boxes
+        for(box in jsonSave.pc) {
+            let currentBoxElement = document.getElementById("box-"+box);
+            currentBoxElement.style.display = "none";
+            currentBox = 0;
+
+            for(let i=0; i<4; i++){
+                let currentRow = currentBoxElement.getElementsByClassName("row-"+i)[0];
+
+                for(let j=0; j<5; j++){
+                    let currentColumn = currentRow.getElementsByClassName("column-"+j)[0];
+                    // currentColumn.textContent = "";
+                    currentColumn.src = "assets/creature-sprites/blank.png";
+                    if(jsonSave.pc[box][5*i+j] != null) {
+                        // currentColumn.textContent = jsonSave.pc[box][5*i+j].nickname;
+                        let pkmnName = await pkmnSpriteCorrection(jsonSave.pc[box][5*i+j].species.name.toLowerCase());
+                        
+                        console.log("Currently loading: " + pkmnName);
+                        currentColumn.src = "assets/creature-sprites/"+pkmnName+".png";
+                    }
+                    
+                }
+
+            }
+        }
+        document.getElementById("boxes").style.display = "grid";
+        document.getElementById("box-0").style.display = "grid";
+
     }
 
 }
@@ -98,6 +127,21 @@ async function displayCreature(id) {
     document.querySelector("#saveEditor").style.display = "flex";
 }
 
+async function changeBox(id) {
+    let currentBoxElement = document.getElementById("box-"+currentBox);
+
+    if(id == "backBoxBtn" && currentBox > 0) {
+        currentBoxElement.style.display = "none";
+        currentBox -= 1;
+        document.getElementById("box-"+currentBox).style.display = "grid";
+    } else if (id == "frwdBoxBtn" && currentBox < 11) {
+        currentBoxElement.style.display = "none";
+        currentBox += 1;
+        document.getElementById("box-"+currentBox).style.display = "grid";
+    }
+    
+};
+
 window.addEventListener("DOMContentLoaded", () => {
     document.querySelector("#saveSelector").addEventListener("submit", (e) => {
         e.preventDefault();
@@ -114,6 +158,14 @@ window.addEventListener("DOMContentLoaded", () => {
         creature.addEventListener("click", (e) => {
             e.preventDefault();
             displayCreature(creature.id);;
+        });
+    });
+
+    let backBox = document.querySelectorAll(".boxBtn");
+    backBox.forEach((button) => {
+        button.addEventListener("click", (e) => {
+            e.preventDefault();
+            changeBox(button.id);;
         });
     });
 
