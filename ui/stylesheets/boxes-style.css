@@ -4,8 +4,28 @@
     /* grid-template-columns: calc(45vw/5),calc(45vw/5),calc(45vw/5),calc(45vw/5),calc(45vw/5); */
 }
 
+.boxCreature:hover {
+    cursor: pointer;
+}
+
+#boxControls {
+    display: grid;
+}
+
+#backBoxBtn {
+    grid-column: 1;
+}
+
+#pcBoxNum {
+    grid-column: 2;
+}
+
+#frwdBoxBtn {
+    grid-column: 3; 
+}
+
 .boxBtn {
-    width: calc(45vw/2)
+    width: calc(45vw/3);
 }
 
 .row-0 {

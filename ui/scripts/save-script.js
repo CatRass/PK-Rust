@@ -50,7 +50,7 @@ async function loadSaveFile() {
 
             let pkmnName = await pkmnSpriteCorrection(jsonSave.party[creature].species.name.toLowerCase());
   
-            console.log("Currently loading: " + pkmnName);
+            // console.log("Currently loading: " + pkmnName);
             currDetails.src = "assets/creature-sprites/"+pkmnName+".png";
 
         }
@@ -61,19 +61,20 @@ async function loadSaveFile() {
             let currentBoxElement = document.getElementById("box-"+box);
             currentBoxElement.style.display = "none";
             currentBox = 0;
+            document.getElementById("pcBoxNum").innerHTML = currentBox+1;
 
-            for(let i=0; i<4; i++){
-                let currentRow = currentBoxElement.getElementsByClassName("row-"+i)[0];
+            for(let row=0; row<4; row++){
+                let currentRow = currentBoxElement.getElementsByClassName("row-"+row)[0];
 
-                for(let j=0; j<5; j++){
-                    let currentColumn = currentRow.getElementsByClassName("column-"+j)[0];
+                for(let col=0; col<5; col++){
+                    let currentColumn = currentRow.getElementsByClassName("column-"+col)[0];
                     // currentColumn.textContent = "";
                     currentColumn.src = "assets/creature-sprites/blank.png";
-                    if(jsonSave.pc[box][5*i+j] != null) {
+                    if(jsonSave.pc[box][5*row+col] != null) {
                         // currentColumn.textContent = jsonSave.pc[box][5*i+j].nickname;
-                        let pkmnName = await pkmnSpriteCorrection(jsonSave.pc[box][5*i+j].species.name.toLowerCase());
+                        let pkmnName = await pkmnSpriteCorrection(jsonSave.pc[box][5*row+col].species.name.toLowerCase());
                         
-                        console.log("Currently loading: " + pkmnName);
+                        // console.log("Currently loading: " + pkmnName);
                         currentColumn.src = "assets/creature-sprites/"+pkmnName+".png";
                     }
                     
@@ -92,15 +93,15 @@ async function testSaveFile() {
     await invoke("printSaveFile");
 }
 
-async function displayCreature(id) {
-    let currPokemon = jsonSave.party[id-1];
+async function displayCreature(currPokemon) {
     let nameDisplay = document.querySelector("#name");
     let lvlDisplay = document.querySelector("#level");
     let movesDisplay = document.getElementById("moves");
 
     let pkmnImage = document.getElementById("displayPkmn");
-    let pkmnName = await pkmnSpriteCorrection(jsonSave.party[id-1].species.name.toLowerCase());
-    console.log("Currently loading: " + pkmnName);
+    console.log(currPokemon);
+    let pkmnName = await pkmnSpriteCorrection(currPokemon.species.name.toLowerCase());
+    // console.log("Currently loading: " + pkmnName);
     pkmnImage.src = "assets/creature-sprites/"+pkmnName+".png";
 
     nameDisplay.value = currPokemon.nickname;
@@ -120,7 +121,6 @@ async function displayCreature(id) {
         }
         currMove.innerHTML = moveName;
         
-        console.log(moveTyping);
         currMove.style.background = "var(--"+moveTyping+")";
     };
 
@@ -134,22 +134,27 @@ async function changeBox(id) {
         currentBoxElement.style.display = "none";
         currentBox -= 1;
         document.getElementById("box-"+currentBox).style.display = "grid";
+        document.getElementById("pcBoxNum").innerHTML = currentBox+1;
     } else if (id == "frwdBoxBtn" && currentBox < 11) {
         currentBoxElement.style.display = "none";
         currentBox += 1;
         document.getElementById("box-"+currentBox).style.display = "grid";
+        document.getElementById("pcBoxNum").innerHTML = currentBox+1;
     }
     
 };
 
 window.addEventListener("DOMContentLoaded", () => {
+
     document.querySelector("#saveSelector").addEventListener("submit", (e) => {
         e.preventDefault();
+
         loadSaveFile();
     });
 
     document.querySelector("#testSave").addEventListener("submit", (e) => {
         e.preventDefault();
+
         testSaveFile();
     });
 
@@ -157,7 +162,8 @@ window.addEventListener("DOMContentLoaded", () => {
     creatureButtons.forEach((creature) => {
         creature.addEventListener("click", (e) => {
             e.preventDefault();
-            displayCreature(creature.id);;
+
+            displayCreature(jsonSave.party[creature.id-1]);
         });
     });
 
@@ -165,7 +171,19 @@ window.addEventListener("DOMContentLoaded", () => {
     backBox.forEach((button) => {
         button.addEventListener("click", (e) => {
             e.preventDefault();
-            changeBox(button.id);;
+
+            changeBox(button.id);
+        });
+    });
+
+    let selectedCreature = document.querySelectorAll(".boxCreature");
+    selectedCreature.forEach((creature) => {
+        creature.addEventListener("click", (e) => {
+            e.preventDefault();
+
+            let creatureIndex = (5*creature.dataset.row) + (1*creature.dataset.column);
+            let creatureBox = creature.dataset.box;
+            displayCreature(jsonSave.pc[creatureBox][creatureIndex]);
         });
     });
 
