@@ -1,6 +1,10 @@
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 const { invoke } = window.__TAURI__.tauri
 
+import {generateBoxes} from "./DOM-generation-script.js";
+
+generateBoxes();
+
 let jsonSave;
 let currentBox = 0;
 
@@ -43,7 +47,7 @@ async function loadSaveFile() {
         }
 
         // Display Current Party
-        for(creature in jsonSave.party) {
+        for(let creature in jsonSave.party) {
 
             let currElement = document.getElementsByClassName("creatureBox")[creature];
             let currDetails = currElement.getElementsByClassName("creature")[0];
@@ -57,7 +61,7 @@ async function loadSaveFile() {
         window.party.style.display = "flex";
 
         // Display Boxes
-        for(box in jsonSave.pc) {
+        for(let box in jsonSave.pc) {
             let currentBoxElement = document.getElementById("box-"+box);
             currentBoxElement.style.display = "none";
             currentBox = 0;
@@ -93,10 +97,15 @@ async function testSaveFile() {
     await invoke("printSaveFile");
 }
 
-async function displayCreature(currPokemon) {
+async function displayCreature(currPokemon, config) {
     let nameDisplay = document.querySelector("#name");
     let lvlDisplay = document.querySelector("#level");
     let movesDisplay = document.getElementById("moves");
+    let displayData = document.querySelector("#pokemon");
+
+    displayData.dataset.isBox = config.isBox;
+    displayData.dataset.isParty = config.isParty;
+    displayData.dataset.index = config.index;
 
     let pkmnImage = document.getElementById("displayPkmn");
     console.log(currPokemon);
@@ -107,7 +116,7 @@ async function displayCreature(currPokemon) {
     nameDisplay.value = currPokemon.nickname;
     lvlDisplay.textContent = "LVL " + currPokemon.level;
 
-    for (move in currPokemon.moves) {
+    for (let move in currPokemon.moves) {
         let moveId = Number(move)+1;
         let currMove = movesDisplay.querySelector("#move-"+moveId);
 
@@ -163,7 +172,13 @@ window.addEventListener("DOMContentLoaded", () => {
         creature.addEventListener("click", (e) => {
             e.preventDefault();
 
-            displayCreature(jsonSave.party[creature.id-1]);
+            let config = {
+                isBox: "false",
+                isParty: "true",
+                index: creature.id-1
+            };
+
+            displayCreature(jsonSave.party[creature.id-1], config);
         });
     });
 
@@ -183,7 +198,14 @@ window.addEventListener("DOMContentLoaded", () => {
 
             let creatureIndex = (5*creature.dataset.row) + (1*creature.dataset.column);
             let creatureBox = creature.dataset.box;
-            displayCreature(jsonSave.pc[creatureBox][creatureIndex]);
+
+            let config = {
+                isBox: creatureBox,
+                isParty: "false",
+                index: creatureIndex
+            };
+
+            displayCreature(jsonSave.pc[creatureBox][creatureIndex], config);
         });
     });
 

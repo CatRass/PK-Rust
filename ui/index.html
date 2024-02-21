@@ -5,7 +5,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <script src="./scripts/save-script.js"></script>
+    <script src="./scripts/save-script.js" type="module"></script>
+
     <link rel="stylesheet" href="./stylesheets/style.css">
     <link rel="stylesheet" href="./stylesheets/boxes-style.css">
     <link rel="stylesheet" href="./stylesheets/editor-style.css">
@@ -15,7 +16,7 @@
   </head>
 
   <body>
-    <h1 id="header">PK Rust</h1>
+    <!-- <h1 id="header">PK Rust</h1> -->
 
     <form id="saveSelector">
         <button type="submit">Select Save</button>
@@ -76,11 +77,14 @@
                 <div class="boxDisplay">
                     <div id="boxControls">
                         <input type="button" id="backBoxBtn" class="boxBtn" value="<">
-                        <p id="pcBoxNum"></p>
+                        <div id="pcBoxNum"></div>
                         <input type="button" id="frwdBoxBtn" class="boxBtn" value=">">
                     </div>
-                    
 
+                    <!-- 
+                        This is the basic structure of a PC box. 
+                        The rest are generated on startup by DOM-generation-script.mjs.
+                    -->
                     <div class="pcBox" id="box-0" style="display: none;">
                             <div class="row-0" style="width: calc(45vw);">
                                 <img class="column-0 boxCreature" data-box="0" data-row="0" data-column="0"></img>
@@ -111,336 +115,6 @@
                                 <img class="column-4 boxCreature" data-box="0" data-row="3" data-column="4"></img>
                             </div>
                     </div>
-                    <div class="pcBox" id="box-1" style="display: none;">
-                        <div class="row-0" style="width: calc(45vw);">
-                            <img class="column-0 boxCreature" data-box="1" data-row="0" data-column="0"></img>
-                            <img class="column-1 boxCreature" data-box="1" data-row="0" data-column="1"></img>
-                            <img class="column-2 boxCreature" data-box="1" data-row="0" data-column="2"></img>
-                            <img class="column-3 boxCreature" data-box="1" data-row="0" data-column="3"></img>
-                            <img class="column-4 boxCreature" data-box="1" data-row="0" data-column="4"></img>
-                        </div>
-                        <div class="row-1" style="width: calc(45vw);">
-                            <img class="column-0 boxCreature" data-box="1" data-row="1" data-column="0"></img>
-                            <img class="column-1 boxCreature" data-box="1" data-row="1" data-column="1"></img>
-                            <img class="column-2 boxCreature" data-box="1" data-row="1" data-column="2"></img>
-                            <img class="column-3 boxCreature" data-box="1" data-row="1" data-column="3"></img>
-                            <img class="column-4 boxCreature" data-box="1" data-row="1" data-column="4"></img>
-                        </div>
-                        <div class="row-2" style="width: calc(45vw);">
-                            <img class="column-0 boxCreature" data-box="1" data-row="2" data-column="0"></img>
-                            <img class="column-1 boxCreature" data-box="1" data-row="2" data-column="1"></img>
-                            <img class="column-2 boxCreature" data-box="1" data-row="2" data-column="2"></img>
-                            <img class="column-3 boxCreature" data-box="1" data-row="2" data-column="3"></img>
-                            <img class="column-4 boxCreature" data-box="1" data-row="2" data-column="4"></img>
-                        </div>
-                        <div class="row-3" style="width: calc(45vw);">
-                            <img class="column-0 boxCreature" data-box="1" data-row="3" data-column="0"></img>
-                            <img class="column-1 boxCreature" data-box="1" data-row="3" data-column="1"></img>
-                            <img class="column-2 boxCreature" data-box="1" data-row="3" data-column="2"></img>
-                            <img class="column-3 boxCreature" data-box="1" data-row="3" data-column="3"></img>
-                            <img class="column-4 boxCreature" data-box="1" data-row="3" data-column="4"></img>
-                        </div>
-                    </div>
-                    <div class="pcBox" id="box-2" style="display: none;">
-                        <div class="row-0" style="width: calc(45vw);">
-                            <img class="column-0 boxCreature" data-box="2" data-row="0" data-column="0"></img>
-                            <img class="column-1 boxCreature" data-box="2" data-row="0" data-column="1"></img>
-                            <img class="column-2 boxCreature" data-box="2" data-row="0" data-column="2"></img>
-                            <img class="column-3 boxCreature" data-box="2" data-row="0" data-column="3"></img>
-                            <img class="column-4 boxCreature" data-box="2" data-row="0" data-column="4"></img>
-                        </div>
-                        <div class="row-1" style="width: calc(45vw);">
-                            <img class="column-0 boxCreature" data-box="2" data-row="1" data-column="0"></img>
-                            <img class="column-1 boxCreature" data-box="2" data-row="1" data-column="1"></img>
-                            <img class="column-2 boxCreature" data-box="2" data-row="1" data-column="2"></img>
-                            <img class="column-3 boxCreature" data-box="2" data-row="1" data-column="3"></img>
-                            <img class="column-4 boxCreature" data-box="2" data-row="1" data-column="4"></img>
-                        </div>
-                        <div class="row-2" style="width: calc(45vw);">
-                            <img class="column-0 boxCreature" data-box="2" data-row="2" data-column="0"></img>
-                            <img class="column-1 boxCreature" data-box="2" data-row="2" data-column="1"></img>
-                            <img class="column-2 boxCreature" data-box="2" data-row="2" data-column="2"></img>
-                            <img class="column-3 boxCreature" data-box="2" data-row="2" data-column="3"></img>
-                            <img class="column-4 boxCreature" data-box="2" data-row="2" data-column="4"></img>
-                        </div>
-                        <div class="row-3" style="width: calc(45vw);">
-                            <img class="column-0 boxCreature" data-box="2" data-row="3" data-column="0"></img>
-                            <img class="column-1 boxCreature" data-box="2" data-row="3" data-column="1"></img>
-                            <img class="column-2 boxCreature" data-box="2" data-row="3" data-column="2"></img>
-                            <img class="column-3 boxCreature" data-box="2" data-row="3" data-column="3"></img>
-                            <img class="column-4 boxCreature" data-box="2" data-row="3" data-column="4"></img>
-                        </div>
-                    </div>
-                    <div class="pcBox" id="box-3" style="display: none;">
-                        <div class="row-0" style="width: calc(45vw);">
-                            <img class="column-0 boxCreature" data-box="3" data-row="0" data-column="0"></img>
-                            <img class="column-1 boxCreature" data-box="3" data-row="0" data-column="1"></img>
-                            <img class="column-2 boxCreature" data-box="3" data-row="0" data-column="2"></img>
-                            <img class="column-3 boxCreature" data-box="3" data-row="0" data-column="3"></img>
-                            <img class="column-4 boxCreature" data-box="3" data-row="0" data-column="4"></img>
-                        </div>
-                        <div class="row-1" style="width: calc(45vw);">
-                            <img class="column-0 boxCreature" data-box="3" data-row="1" data-column="0"></img>
-                            <img class="column-1 boxCreature" data-box="3" data-row="1" data-column="1"></img>
-                            <img class="column-2 boxCreature" data-box="3" data-row="1" data-column="2"></img>
-                            <img class="column-3 boxCreature" data-box="3" data-row="1" data-column="3"></img>
-                            <img class="column-4 boxCreature" data-box="3" data-row="1" data-column="4"></img>
-                        </div>
-                        <div class="row-2" style="width: calc(45vw);">
-                            <img class="column-0 boxCreature" data-box="3" data-row="2" data-column="0"></img>
-                            <img class="column-1 boxCreature" data-box="3" data-row="2" data-column="1"></img>
-                            <img class="column-2 boxCreature" data-box="3" data-row="2" data-column="2"></img>
-                            <img class="column-3 boxCreature" data-box="3" data-row="2" data-column="3"></img>
-                            <img class="column-4 boxCreature" data-box="3" data-row="2" data-column="4"></img>
-                        </div>
-                        <div class="row-3" style="width: calc(45vw);">
-                            <img class="column-0 boxCreature" data-box="3" data-row="3" data-column="0"></img>
-                            <img class="column-1 boxCreature" data-box="3" data-row="3" data-column="1"></img>
-                            <img class="column-2 boxCreature" data-box="3" data-row="3" data-column="2"></img>
-                            <img class="column-3 boxCreature" data-box="3" data-row="3" data-column="3"></img>
-                            <img class="column-4 boxCreature" data-box="3" data-row="3" data-column="4"></img>
-                        </div>
-                    </div>
-                    <div class="pcBox" id="box-4" style="display: none;">
-                        <div class="row-0" style="width: calc(45vw);">
-                            <img class="column-0 boxCreature" data-box="4" data-row="0" data-column="0"></img>
-                            <img class="column-1 boxCreature" data-box="4" data-row="0" data-column="1"></img>
-                            <img class="column-2 boxCreature" data-box="4" data-row="0" data-column="2"></img>
-                            <img class="column-3 boxCreature" data-box="4" data-row="0" data-column="3"></img>
-                            <img class="column-4 boxCreature" data-box="4" data-row="0" data-column="4"></img>
-                        </div>
-                        <div class="row-1" style="width: calc(45vw);">
-                            <img class="column-0 boxCreature" data-box="4" data-row="1" data-column="0"></img>
-                            <img class="column-1 boxCreature" data-box="4" data-row="1" data-column="1"></img>
-                            <img class="column-2 boxCreature" data-box="4" data-row="1" data-column="2"></img>
-                            <img class="column-3 boxCreature" data-box="4" data-row="1" data-column="3"></img>
-                            <img class="column-4 boxCreature" data-box="4" data-row="1" data-column="4"></img>
-                        </div>
-                        <div class="row-2" style="width: calc(45vw);">
-                            <img class="column-0 boxCreature" data-box="4" data-row="2" data-column="0"></img>
-                            <img class="column-1 boxCreature" data-box="4" data-row="2" data-column="1"></img>
-                            <img class="column-2 boxCreature" data-box="4" data-row="2" data-column="2"></img>
-                            <img class="column-3 boxCreature" data-box="4" data-row="2" data-column="3"></img>
-                            <img class="column-4 boxCreature" data-box="4" data-row="2" data-column="4"></img>
-                        </div>
-                        <div class="row-3" style="width: calc(45vw);">
-                            <img class="column-0 boxCreature" data-box="4" data-row="3" data-column="0"></img>
-                            <img class="column-1 boxCreature" data-box="4" data-row="3" data-column="1"></img>
-                            <img class="column-2 boxCreature" data-box="4" data-row="3" data-column="2"></img>
-                            <img class="column-3 boxCreature" data-box="4" data-row="3" data-column="3"></img>
-                            <img class="column-4 boxCreature" data-box="4" data-row="3" data-column="4"></img>
-                        </div>
-                    </div>
-                    <div class="pcBox" id="box-5" style="display: none;">
-                        <div class="row-0" style="width: calc(45vw);">
-                            <img class="column-0 boxCreature" data-box="5" data-row="0" data-column="0"></img>
-                            <img class="column-1 boxCreature" data-box="5" data-row="0" data-column="1"></img>
-                            <img class="column-2 boxCreature" data-box="5" data-row="0" data-column="2"></img>
-                            <img class="column-3 boxCreature" data-box="5" data-row="0" data-column="3"></img>
-                            <img class="column-4 boxCreature" data-box="5" data-row="0" data-column="4"></img>
-                        </div>
-                        <div class="row-1" style="width: calc(45vw);">
-                            <img class="column-0 boxCreature" data-box="5" data-row="1" data-column="0"></img>
-                            <img class="column-1 boxCreature" data-box="5" data-row="1" data-column="1"></img>
-                            <img class="column-2 boxCreature" data-box="5" data-row="1" data-column="2"></img>
-                            <img class="column-3 boxCreature" data-box="5" data-row="1" data-column="3"></img>
-                            <img class="column-4 boxCreature" data-box="5" data-row="1" data-column="4"></img>
-                        </div>
-                        <div class="row-2" style="width: calc(45vw);">
-                            <img class="column-0 boxCreature" data-box="5" data-row="2" data-column="0"></img>
-                            <img class="column-1 boxCreature" data-box="5" data-row="2" data-column="1"></img>
-                            <img class="column-2 boxCreature" data-box="5" data-row="2" data-column="2"></img>
-                            <img class="column-3 boxCreature" data-box="5" data-row="2" data-column="3"></img>
-                            <img class="column-4 boxCreature" data-box="5" data-row="2" data-column="4"></img>
-                        </div>
-                        <div class="row-3" style="width: calc(45vw);">
-                            <img class="column-0 boxCreature" data-box="5" data-row="3" data-column="0"></img>
-                            <img class="column-1 boxCreature" data-box="5" data-row="3" data-column="1"></img>
-                            <img class="column-2 boxCreature" data-box="5" data-row="3" data-column="2"></img>
-                            <img class="column-3 boxCreature" data-box="5" data-row="3" data-column="3"></img>
-                            <img class="column-4 boxCreature" data-box="5" data-row="3" data-column="4"></img>
-                        </div>
-                    </div>
-                    <div class="pcBox" id="box-6" style="display: none;">
-                        <div class="row-0" style="width: calc(45vw);">
-                            <img class="column-0 boxCreature" data-box="6" data-row="0" data-column="0"></img>
-                            <img class="column-1 boxCreature" data-box="6" data-row="0" data-column="1"></img>
-                            <img class="column-2 boxCreature" data-box="6" data-row="0" data-column="2"></img>
-                            <img class="column-3 boxCreature" data-box="6" data-row="0" data-column="3"></img>
-                            <img class="column-4 boxCreature" data-box="6" data-row="0" data-column="4"></img>
-                        </div>
-                        <div class="row-1" style="width: calc(45vw);">
-                            <img class="column-0 boxCreature" data-box="6" data-row="1" data-column="0"></img>
-                            <img class="column-1 boxCreature" data-box="6" data-row="1" data-column="1"></img>
-                            <img class="column-2 boxCreature" data-box="6" data-row="1" data-column="2"></img>
-                            <img class="column-3 boxCreature" data-box="6" data-row="1" data-column="3"></img>
-                            <img class="column-4 boxCreature" data-box="6" data-row="1" data-column="4"></img>
-                        </div>
-                        <div class="row-2" style="width: calc(45vw);">
-                            <img class="column-0 boxCreature" data-box="6" data-row="2" data-column="0"></img>
-                            <img class="column-1 boxCreature" data-box="6" data-row="2" data-column="1"></img>
-                            <img class="column-2 boxCreature" data-box="6" data-row="2" data-column="2"></img>
-                            <img class="column-3 boxCreature" data-box="6" data-row="2" data-column="3"></img>
-                            <img class="column-4 boxCreature" data-box="6" data-row="2" data-column="4"></img>
-                        </div>
-                        <div class="row-3" style="width: calc(45vw);">
-                            <img class="column-0 boxCreature" data-box="6" data-row="3" data-column="0"></img>
-                            <img class="column-1 boxCreature" data-box="6" data-row="3" data-column="1"></img>
-                            <img class="column-2 boxCreature" data-box="6" data-row="3" data-column="2"></img>
-                            <img class="column-3 boxCreature" data-box="6" data-row="3" data-column="3"></img>
-                            <img class="column-4 boxCreature" data-box="6" data-row="3" data-column="4"></img>
-                        </div>
-                    </div>
-                    <div class="pcBox" id="box-7" style="display: none;">
-                        <div class="row-0" style="width: calc(45vw);">
-                            <img class="column-0 boxCreature" data-box="7" data-row="0" data-column="0"></img>
-                            <img class="column-1 boxCreature" data-box="7" data-row="0" data-column="1"></img>
-                            <img class="column-2 boxCreature" data-box="7" data-row="0" data-column="2"></img>
-                            <img class="column-3 boxCreature" data-box="7" data-row="0" data-column="3"></img>
-                            <img class="column-4 boxCreature" data-box="7" data-row="0" data-column="4"></img>
-                        </div>
-                        <div class="row-1" style="width: calc(45vw);">
-                            <img class="column-0 boxCreature" data-box="7" data-row="1" data-column="0"></img>
-                            <img class="column-1 boxCreature" data-box="7" data-row="1" data-column="1"></img>
-                            <img class="column-2 boxCreature" data-box="7" data-row="1" data-column="2"></img>
-                            <img class="column-3 boxCreature" data-box="7" data-row="1" data-column="3"></img>
-                            <img class="column-4 boxCreature" data-box="7" data-row="1" data-column="4"></img>
-                        </div>
-                        <div class="row-2" style="width: calc(45vw);">
-                            <img class="column-0 boxCreature" data-box="7" data-row="2" data-column="0"></img>
-                            <img class="column-1 boxCreature" data-box="7" data-row="2" data-column="1"></img>
-                            <img class="column-2 boxCreature" data-box="7" data-row="2" data-column="2"></img>
-                            <img class="column-3 boxCreature" data-box="7" data-row="2" data-column="3"></img>
-                            <img class="column-4 boxCreature" data-box="7" data-row="2" data-column="4"></img>
-                        </div>
-                        <div class="row-3" style="width: calc(45vw);">
-                            <img class="column-0 boxCreature" data-box="7" data-row="3" data-column="0"></img>
-                            <img class="column-1 boxCreature" data-box="7" data-row="3" data-column="1"></img>
-                            <img class="column-2 boxCreature" data-box="7" data-row="3" data-column="2"></img>
-                            <img class="column-3 boxCreature" data-box="7" data-row="3" data-column="3"></img>
-                            <img class="column-4 boxCreature" data-box="7" data-row="3" data-column="4"></img>
-                        </div>
-                    </div>
-                    <div class="pcBox" id="box-8" style="display: none;">
-                        <div class="row-0" style="width: calc(45vw);">
-                            <img class="column-0 boxCreature" data-box="8" data-row="0" data-column="0"></img>
-                            <img class="column-1 boxCreature" data-box="8" data-row="0" data-column="1"></img>
-                            <img class="column-2 boxCreature" data-box="8" data-row="0" data-column="2"></img>
-                            <img class="column-3 boxCreature" data-box="8" data-row="0" data-column="3"></img>
-                            <img class="column-4 boxCreature" data-box="8" data-row="0" data-column="4"></img>
-                        </div>
-                        <div class="row-1" style="width: calc(45vw);">
-                            <img class="column-0 boxCreature" data-box="8" data-row="1" data-column="0"></img>
-                            <img class="column-1 boxCreature" data-box="8" data-row="1" data-column="1"></img>
-                            <img class="column-2 boxCreature" data-box="8" data-row="1" data-column="2"></img>
-                            <img class="column-3 boxCreature" data-box="8" data-row="1" data-column="3"></img>
-                            <img class="column-4 boxCreature" data-box="8" data-row="1" data-column="4"></img>
-                        </div>
-                        <div class="row-2" style="width: calc(45vw);">
-                            <img class="column-0 boxCreature" data-box="8" data-row="2" data-column="0"></img>
-                            <img class="column-1 boxCreature" data-box="8" data-row="2" data-column="1"></img>
-                            <img class="column-2 boxCreature" data-box="8" data-row="2" data-column="2"></img>
-                            <img class="column-3 boxCreature" data-box="8" data-row="2" data-column="3"></img>
-                            <img class="column-4 boxCreature" data-box="8" data-row="2" data-column="4"></img>
-                        </div>
-                        <div class="row-3" style="width: calc(45vw);">
-                            <img class="column-0 boxCreature" data-box="8" data-row="3" data-column="0"></img>
-                            <img class="column-1 boxCreature" data-box="8" data-row="3" data-column="1"></img>
-                            <img class="column-2 boxCreature" data-box="8" data-row="3" data-column="2"></img>
-                            <img class="column-3 boxCreature" data-box="8" data-row="3" data-column="3"></img>
-                            <img class="column-4 boxCreature" data-box="8" data-row="3" data-column="4"></img>
-                        </div>
-                    </div>
-                    <div class="pcBox" id="box-9" style="display: none;">
-                        <div class="row-0" style="width: calc(45vw);">
-                            <img class="column-0 boxCreature" data-box="9" data-row="0" data-column="0"></img>
-                            <img class="column-1 boxCreature" data-box="9" data-row="0" data-column="1"></img>
-                            <img class="column-2 boxCreature" data-box="9" data-row="0" data-column="2"></img>
-                            <img class="column-3 boxCreature" data-box="9" data-row="0" data-column="3"></img>
-                            <img class="column-4 boxCreature" data-box="9" data-row="0" data-column="4"></img>
-                        </div>
-                        <div class="row-1" style="width: calc(45vw);">
-                            <img class="column-0 boxCreature" data-box="9" data-row="1" data-column="0"></img>
-                            <img class="column-1 boxCreature" data-box="9" data-row="1" data-column="1"></img>
-                            <img class="column-2 boxCreature" data-box="9" data-row="1" data-column="2"></img>
-                            <img class="column-3 boxCreature" data-box="9" data-row="1" data-column="3"></img>
-                            <img class="column-4 boxCreature" data-box="9" data-row="1" data-column="4"></img>
-                        </div>
-                        <div class="row-2" style="width: calc(45vw);">
-                            <img class="column-0 boxCreature" data-box="9" data-row="2" data-column="0"></img>
-                            <img class="column-1 boxCreature" data-box="9" data-row="2" data-column="1"></img>
-                            <img class="column-2 boxCreature" data-box="9" data-row="2" data-column="2"></img>
-                            <img class="column-3 boxCreature" data-box="9" data-row="2" data-column="3"></img>
-                            <img class="column-4 boxCreature" data-box="9" data-row="2" data-column="4"></img>
-                        </div>
-                        <div class="row-3" style="width: calc(45vw);">
-                            <img class="column-0 boxCreature" data-box="9" data-row="3" data-column="0"></img>
-                            <img class="column-1 boxCreature" data-box="9" data-row="3" data-column="1"></img>
-                            <img class="column-2 boxCreature" data-box="9" data-row="3" data-column="2"></img>
-                            <img class="column-3 boxCreature" data-box="9" data-row="3" data-column="3"></img>
-                            <img class="column-4 boxCreature" data-box="9" data-row="3" data-column="4"></img>
-                        </div>
-                    </div>
-                    <div class="pcBox" id="box-10" style="display: none;">
-                        <div class="row-0" style="width: calc(45vw);">
-                            <img class="column-0 boxCreature" data-box="10" data-row="0" data-column="0"></img>
-                            <img class="column-1 boxCreature" data-box="10" data-row="0" data-column="1"></img>
-                            <img class="column-2 boxCreature" data-box="10" data-row="0" data-column="2"></img>
-                            <img class="column-3 boxCreature" data-box="10" data-row="0" data-column="3"></img>
-                            <img class="column-4 boxCreature" data-box="10" data-row="0" data-column="4"></img>
-                        </div>
-                        <div class="row-1" style="width: calc(45vw);">
-                            <img class="column-0 boxCreature" data-box="10" data-row="1" data-column="0"></img>
-                            <img class="column-1 boxCreature" data-box="10" data-row="1" data-column="1"></img>
-                            <img class="column-2 boxCreature" data-box="10" data-row="1" data-column="2"></img>
-                            <img class="column-3 boxCreature" data-box="10" data-row="1" data-column="3"></img>
-                            <img class="column-4 boxCreature" data-box="10" data-row="1" data-column="4"></img>
-                        </div>
-                        <div class="row-2" style="width: calc(45vw);">
-                            <img class="column-0 boxCreature" data-box="10" data-row="2" data-column="0"></img>
-                            <img class="column-1 boxCreature" data-box="10" data-row="2" data-column="1"></img>
-                            <img class="column-2 boxCreature" data-box="10" data-row="2" data-column="2"></img>
-                            <img class="column-3 boxCreature" data-box="10" data-row="2" data-column="3"></img>
-                            <img class="column-4 boxCreature" data-box="10" data-row="2" data-column="4"></img>
-                        </div>
-                        <div class="row-3" style="width: calc(45vw);">
-                            <img class="column-0 boxCreature" data-box="10" data-row="3" data-column="0"></img>
-                            <img class="column-1 boxCreature" data-box="10" data-row="3" data-column="1"></img>
-                            <img class="column-2 boxCreature" data-box="10" data-row="3" data-column="2"></img>
-                            <img class="column-3 boxCreature" data-box="10" data-row="3" data-column="3"></img>
-                            <img class="column-4 boxCreature" data-box="10" data-row="3" data-column="4"></img>
-                        </div>
-                    </div>
-                    <div class="pcBox" id="box-11" style="display: none;"> boxCreature
-                        <div class="row-0" style="width: calc(45vw);">
-                            <img class="column-0 boxCreature" data-box="11" data-row="0" data-column="0"></img>
-                            <img class="column-1 boxCreature" data-box="11" data-row="0" data-column="1"></img>
-                            <img class="column-2 boxCreature" data-box="11" data-row="0" data-column="2"></img>
-                            <img class="column-3 boxCreature" data-box="11" data-row="0" data-column="3"></img>
-                            <img class="column-4 boxCreature" data-box="11" data-row="0" data-column="4"></img>
-                        </div>
-                        <div class="row-1" style="width: calc(45vw);">
-                            <img class="column-0 boxCreature" data-box="11" data-row="1" data-column="0"></img>
-                            <img class="column-1 boxCreature" data-box="11" data-row="1" data-column="1"></img>
-                            <img class="column-2 boxCreature" data-box="11" data-row="1" data-column="2"></img>
-                            <img class="column-3 boxCreature" data-box="11" data-row="1" data-column="3"></img>
-                            <img class="column-4 boxCreature" data-box="11" data-row="1" data-column="4"></img>
-                        </div>
-                        <div class="row-2" style="width: calc(45vw);">
-                            <img class="column-0 boxCreature" data-box="11" data-row="2" data-column="0"></img>
-                            <img class="column-1 boxCreature" data-box="11" data-row="2" data-column="1"></img>
-                            <img class="column-2 boxCreature" data-box="11" data-row="2" data-column="2"></img>
-                            <img class="column-3 boxCreature" data-box="11" data-row="2" data-column="3"></img>
-                            <img class="column-4 boxCreature" data-box="11" data-row="2" data-column="4"></img>
-                        </div>
-                        <div class="row-3" style="width: calc(45vw);">
-                            <img class="column-0 boxCreature" data-box="11" data-row="3" data-column="0"></img>
-                            <img class="column-1 boxCreature" data-box="11" data-row="3" data-column="1"></img>
-                            <img class="column-2 boxCreature" data-box="11" data-row="3" data-column="2"></img>
-                            <img class="column-3 boxCreature" data-box="11" data-row="3" data-column="3"></img>
-                            <img class="column-4 boxCreature" data-box="11" data-row="3" data-column="4"></img>
-                        </div>
-                    </div>
  
                 </div>
              </div>
@@ -448,7 +122,7 @@
         </div>
     
         <div id="saveEditor">
-            <div id="pokemon">
+            <div id="pokemon" data-is-party="none" data-is-box="none" data-index="-1">
                 <img id="displayPkmn">
                 <input type="text" id="name" maxlength="11">
                 <p id="level"></p>
