@@ -227,6 +227,7 @@ pub mod CreatureData {
     #[derive(Debug)]
     #[derive(serde::Serialize, serde::Deserialize)]
     struct IVs {
+        hp:  u16,
         atk: u16,
         def: u16,
         spd: u16,
@@ -263,11 +264,11 @@ pub mod CreatureData {
 
     impl Pokemon {
         /// Constructor for a Pokemon, when being read from a save file
-        pub(crate) fn get(index: i16, level:i8, nickname: String, moves: Vec<Move>, ot: u16, otn: String, hp: i16, evArr: [u16;5], ivArr: [u16;4], statArr: [u16;5]) -> Pokemon {
+        pub(crate) fn get(index: i16, level:i8, nickname: String, moves: Vec<Move>, ot: u16, otn: String, hp: i16, evArr: [u16;5], ivArr: [u16;5], statArr: [u16;5]) -> Pokemon {
             let species = Species::parse(index);
 
             let evs = EVs{hp: evArr[0], atk: evArr[1], def: evArr[2], spd: evArr[3], spc: evArr[4]};
-            let ivs = IVs{atk: ivArr[0], def: ivArr[1], spd: ivArr[2], spc: ivArr[3]};
+            let ivs = IVs{atk: ivArr[0], def: ivArr[1], spd: ivArr[2], spc: ivArr[3], hp: ivArr[4]};
             let stats = Stats{hp: statArr[0], atk: statArr[1], def: statArr[2], spd: statArr[3], spc: statArr[4]};
             
             return Pokemon{nickname, species, level, moves, ot, otn, hp, evs, ivs, stats};
@@ -417,7 +418,7 @@ impl Save {
             // Stat Obtaining Code
             let stats: [u16;5] = Self::getPokemonStats(&save,&pkmnAddress);
             // IV Obtaining Code
-            let ivs: [u16;4] = Self::getPokemonIVs(&save,&pkmnAddress);
+            let ivs: [u16;5] = Self::getPokemonIVs(&save,&pkmnAddress);
             // Original Trainer Obtaining Code
             let ot = Self::getPokemonOTID(&save,&pkmnAddress);
             let otn = Self::getPokemonOTName(&save, &(pkmnAddress+OTN_OFF));
@@ -459,7 +460,7 @@ impl Save {
                 let moves = Self::getPokemonMoves(&save,&pkmnAddress);
                 let nickname = Self::getPokemonNick(&save, &nickAddress);
                 let evs: [u16;5] = Self::getPokemonEVs(&save,&pkmnAddress);
-                let ivs: [u16;4] = Self::getPokemonIVs(&save,&pkmnAddress);
+                let ivs: [u16;5] = Self::getPokemonIVs(&save,&pkmnAddress);
                 let level: i8 = save[pkmnAddress+0x03] as i8;
                 let otn = Self::getPokemonOTName(&save, &(currAddr+PC_TRAINER_OFF+(creature*0xB)));
                 // println!("Original Trainer name at: {:X}",currAddr+PC_TRAINER_OFF+(creature*0xB));
@@ -585,16 +586,23 @@ impl Save {
     /// (Also known as Determinant Values)
     /// 
     /// **TODO**: Figure out a better way to split into fours
-    fn getPokemonIVs(save: &Vec<u8>,currAddr: &usize) -> [u16;4]{
+    fn getPokemonIVs(save: &Vec<u8>,currAddr: &usize) -> [u16;5]{
         let allIVs = format!("{:08b}{:08b}",save[currAddr+IV_OFF],save[currAddr+IV_OFF+1]);
         let (half, half2) = allIVs.split_at(8);
         let ((atk, def), (spd, spc)) = (half.split_at(4), half2.split_at(4));
+        let hp = format!("{}{}{}{}",
+                                            atk.chars().last().unwrap(),
+                                            def.chars().last().unwrap(),
+                                            spd.chars().last().unwrap(),
+                                            spc.chars().last().unwrap()
+                                        );
         // println!("At address: {:#0X} IV: {}",pkmnAddress+IV_OFF,allIVs);
-        let ivs: [u16;4] = [
+        let ivs: [u16;5] = [
                                 u16::from_str_radix(atk,2).unwrap(),
                                 u16::from_str_radix(def,2).unwrap(),
                                 u16::from_str_radix(spd,2).unwrap(),
                                 u16::from_str_radix(spc,2).unwrap(),
+                                u16::from_str_radix(&hp,2).unwrap(),
                             ];
         
         return ivs;

@@ -2,6 +2,7 @@
 const { invoke } = window.__TAURI__.tauri
 
 import {generateBoxes} from "./DOM-generation-script.js";
+import {drawStats} from "./stats-display-script.js";
 
 generateBoxes();
 
@@ -106,6 +107,8 @@ async function displayCreature(currPokemon, config) {
     displayData.dataset.isBox = config.isBox;
     displayData.dataset.isParty = config.isParty;
     displayData.dataset.index = config.index;
+
+    drawStats(currPokemon.ivs);
 
     let pkmnImage = document.getElementById("displayPkmn");
     console.log(currPokemon);
