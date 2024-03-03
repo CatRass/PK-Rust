@@ -13,25 +13,30 @@ function draw(dist, startPoint) {
     // Start/HP point
     let pointsArr = [startPoint];
     placeLabel(startPoint[0],startPoint[1] - 10,"middle","HP");
+    placeInput(startPoint[0],startPoint[1] - 50, "hpInput");
 
     // ATK Point
     pointsArr.push([    newY(pointsArr[0][0], distance, angle),
                         newX(pointsArr[0][1], distance, angle)]);
     placeLabel(pointsArr[1][0]+10,pointsArr[1][1],"left","ATK");
+    placeInput(pointsArr[1][0]+10,pointsArr[1][1] + 10, "atkInput");
 
     // DEF Point
     pointsArr.push([pointsArr[1][0], pointsArr[1][1]+distance]);
     placeLabel(pointsArr[2][0]+10,pointsArr[2][1],"left","DEF");
+    placeInput(pointsArr[2][0]+10,pointsArr[2][1] + 10, "defInput");
 
     // SPD Point
     pointsArr.push([    newY(pointsArr[2][0], distance, -angle),
                         newX(pointsArr[2][1], distance, -angle)]);
     placeLabel(pointsArr[3][0],pointsArr[3][1]+20,"middle","SPD");
+    placeInput(pointsArr[3][0],pointsArr[3][1]+30, "spdInput");
 
     // SPC Point
     pointsArr.push([    newY(pointsArr[3][0], -distance, angle),
                         newX(pointsArr[3][1], -distance, angle)]);
     placeLabel(pointsArr[4][0]-30,pointsArr[4][1],"right","SPC");
+    placeInput(pointsArr[4][0]-30,pointsArr[4][1] + 10, "spcInput");
 
     // Not used in Gen 1/2
     pointsArr.push([pointsArr[4][0], pointsArr[4][1]-distance]);
@@ -48,7 +53,6 @@ function draw(dist, startPoint) {
 export function drawStats(pkmnStats) {
     let midPoint = [statDisplayStart[0], statDisplayStart[1]+statDisplaySize];
     let singleIV = statDisplaySize/15;
-    let angle = 60 * (Math.PI/180);
 
     let shape = document.querySelector("#stats");
     let shapePoints = shape.getAttribute("points");
@@ -94,19 +98,14 @@ export function drawStats(pkmnStats) {
     pointsArr.push([pointsArr[0][0],pointsArr[0][1]]);
 
     for (let points in pointsArr) {
-
         shapePoints += pointsArr[points][0] + "," + pointsArr[points][1] + " ";
-        // console.log("Value at " + points + ": " + pointsArr[points][0] + " " + pointsArr[points][1] + " ");
-    
-    //     let pointCircle = document.createElementNS("http://www.w3.org/2000/svg", "ellipse");
-    //     pointCircle.setAttribute("cx", pointsArr[points][0]);
-    //     pointCircle.setAttribute("cy", pointsArr[points][1]);
-    //     pointCircle.setAttribute("rx", 5);
-    //     pointCircle.setAttribute("ry", 5);
-    //     pointCircle.setAttribute("id", points);
-    //     document.getElementById("statWheel").appendChild(pointCircle);
     }
     shape.setAttribute("points", shapePoints);
+    setInputValues("hpInput",pkmnStats.hp);
+    setInputValues("defInput",pkmnStats.def);
+    setInputValues("atkInput",pkmnStats.atk);
+    setInputValues("spdInput",pkmnStats.spd);
+    setInputValues("spcInput",pkmnStats.spc);
 }
 
 function newX(lastX, dist, angle) {
@@ -125,4 +124,28 @@ function placeLabel(x,y,anchor,text) {
     textLabel.setAttribute("text-anchor",anchor)
     textLabel.innerHTML = text;
     document.getElementById("statWheel").appendChild(textLabel);
+}
+
+function placeInput(x,y,id) {
+    let inputObject = document.createElementNS("http://www.w3.org/2000/svg","foreignObject");
+    inputObject.setAttribute("x", x);
+    inputObject.setAttribute("y", y);
+    inputObject.setAttribute("width",100)
+    inputObject.setAttribute("height",50)
+    let input = document.createElementNS("http://www.w3.org/1999/xhtml", "input");
+    input.setAttribute("xmlns", "http://www.w3.org/1999/xhtml");
+    input.setAttribute("type", "number");
+    input.setAttribute("min", 0);
+    input.setAttribute("max", 15);
+    input.setAttribute("readonly", true);
+    input.setAttribute("id", id);
+    input.setAttribute("style", "width: 50px;");
+
+    inputObject.appendChild(input);
+    document.getElementById("statWheel").appendChild(inputObject);
+    
+}
+
+function setInputValues(id, value) {
+    document.getElementById(id).setAttribute("value", value);
 }
