@@ -13,6 +13,7 @@
 .moveBox {
     margin: 1vw;
     user-select: none;
+    display: block;
 }
 
 #move-1 {

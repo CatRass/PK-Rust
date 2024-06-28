@@ -24,6 +24,7 @@ async function loadSaveFile() {
     // A temporary save variable, so jsonSave doesn't get poisoned 
     // upon user closing the file select option
     let tempSave = JSON.parse(await invoke("getSaveFile"));
+    console.log("Save File: " );
     console.log(tempSave);
 
     // If the user has not selected a save file, the JSON
@@ -127,9 +128,9 @@ async function displayCreature(currPokemon, config) {
         let moveTyping = currPokemon.moves[move].typing;
 
         if (moveName == "Null") {
-            currMove.style.display = "none";
+            currMove.style.opacity = 0;
         } else {
-            currMove.style.display = "block";
+            currMove.style.opacity = 1;
         }
         currMove.innerHTML = moveName;
         
@@ -212,4 +213,10 @@ window.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+    let ivInputs = document.querySelectorAll(".ivInput");
+    ivInputs.forEach((input) => {
+        input.addEventListener("change", (e) => {
+            console.log(e.target.innerText);
+        });
+    });
 });

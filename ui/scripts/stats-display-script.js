@@ -9,6 +9,14 @@ function draw(dist, startPoint) {
 
     let shape = document.querySelector("#base");
     let shapePoints = shape.getAttribute("points");
+
+    let labelGroup = document.createElementNS("http://www.w3.org/2000/svg","g")
+    labelGroup.setAttribute("id","labelGroup");
+    document.getElementById("statWheel").appendChild(labelGroup)
+
+    let inputGroup = document.createElementNS("http://www.w3.org/2000/svg","g")
+    inputGroup.setAttribute("id","inputGroup");
+    document.getElementById("statWheel").appendChild(inputGroup)
     
     // Start/HP point
     let pointsArr = [startPoint];
@@ -123,11 +131,12 @@ function placeLabel(x,y,anchor,text) {
     textLabel.setAttribute("fill", "black");
     textLabel.setAttribute("text-anchor",anchor)
     textLabel.innerHTML = text;
-    document.getElementById("statWheel").appendChild(textLabel);
+    document.getElementById("labelGroup").appendChild(textLabel);
 }
 
 function placeInput(x,y,id) {
     let inputObject = document.createElementNS("http://www.w3.org/2000/svg","foreignObject");
+    inputObject.setAttribute("class","ivInputSVG");
     inputObject.setAttribute("x", x);
     inputObject.setAttribute("y", y);
     inputObject.setAttribute("width",100)
@@ -137,15 +146,17 @@ function placeInput(x,y,id) {
     input.setAttribute("type", "number");
     input.setAttribute("min", 0);
     input.setAttribute("max", 15);
-    input.setAttribute("readonly", true);
+    // input.setAttribute("readonly", true);
     input.setAttribute("id", id);
+    input.setAttribute("class", "ivInput");
     input.setAttribute("style", "width: 50px;");
 
     inputObject.appendChild(input);
-    document.getElementById("statWheel").appendChild(inputObject);
+    document.getElementById("inputGroup").appendChild(inputObject);
     
 }
 
 function setInputValues(id, value) {
     document.getElementById(id).setAttribute("value", value);
+    document.getElementById(id).setAttribute("data-value", value);
 }
