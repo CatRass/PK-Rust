@@ -10,22 +10,26 @@
     <link rel="stylesheet" href="./stylesheets/style.css">
     <link rel="stylesheet" href="./stylesheets/boxes-style.css">
     <link rel="stylesheet" href="./stylesheets/editor-style.css">
-    <link rel="stylesheet" href="./stylesheets/display-style.css">
+    <link rel="stylesheet" href="./stylesheets/display-style.css"> 
 
-    <!-- <script type="application/javascript" src=".\scripts\deps\babel.js"></script>
+    <script type="application/javascript" src=".\scripts\deps\babel.js"></script>
     <script type="application/javascript" src=".\scripts\deps\react-18.2.0.js"></script>
-    <script type="application/javascript" src=".\scripts\deps\react-dom-18.2.0.js"></script> -->
+    <script type="application/javascript" src=".\scripts\deps\react-dom-18.2.0.js"></script>
 
-    <!-- <script  type ="text/babel" src="./scripts/react/components/Test.js" data-type="module" ></script> -->
-    <!-- <script data-plugins="transform-modules-umd" type ="text/babel" src="./scripts/react/App.js" data-type="module"></script> -->
-    
+    <!-- For proper debugging messages -->
+    <!-- <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone@7.19.3/babel.js"></script> -->
+
+    <script data-plugins="transform-modules-umd" type="text/babel" data-presets="react" data-type="module" src="./scripts/react/components/SaveEditor.js"></script>
+    <script data-plugins="transform-modules-umd" type="text/babel" data-presets="react" data-type="module" src="./scripts/react/components/SaveDisplay.js"></script>
+    <script data-plugins="transform-modules-umd" type ="text/babel" src="./scripts/react/App.js" data-type="module"></script>
 
     <title>PK-Rust</title>
   </head>
 
-  <body>
-    <div id="root"></div>
-
+  <body>    
+    
     <form id="saveSelector">
         <button type="submit">Select Save</button>
     </form>
@@ -35,149 +39,7 @@
     </form>
 
     <div id="content">
-        <div id="saveDisplay">
-            <div id="trainerDetails">
-                <label for="trainerName">Trainer Name</label>
-                <input  id="trainerName"    type="text" maxlength="11">
-                <br>
-                <label for="trainerID">Trainer ID</label>
-                <input  id="trainerID"      type="number" min="0" max="65535">
-                <br>
-                <label for="trainerMoney">Trainer Money</label>
-                <input  id="trainerMoney"   type="number">
-            </div>
-    
-            <div id="party">
-                <div class="creatureBox" id="1">
-                    <button class="creatureSelect" id="1">
-                        <img class="creature">
-                    </button>
-                </div>
-                <div class="creatureBox" id="2">
-                    <button class="creatureSelect" id="2">
-                        <img class="creature">
-                    </button>
-                </div>
-                <div class="creatureBox" id="3">
-                    <button class="creatureSelect" id="3">
-                        <img class="creature">
-                    </button>
-                </div>
-                <div class="creatureBox" id="4">
-                    <button class="creatureSelect" id="4">
-                        <img class="creature">
-                    </button>
-                </div>
-                <div class="creatureBox" id="5">
-                    <button class="creatureSelect" id="5">
-                        <img class="creature">
-                    </button>
-                </div>
-                <div class="creatureBox" id="6">
-                    <button class="creatureSelect"  id="6">
-                        <img class="creature">
-                    </button>
-                </div>
-            </div>
 
-            <div id="boxes" style="display: none;">
-                <h3>PC Pokemon</h3>
-                <div class="boxDisplay">
-                    <div id="boxControls">
-                        <input type="button" id="backBoxBtn" class="boxBtn" value="<">
-                        <div id="pcBoxNum"></div>
-                        <input type="button" id="frwdBoxBtn" class="boxBtn" value=">">
-                    </div>
-
-                    <!-- 
-                        This is the basic structure of a PC box. 
-                        The rest are generated on startup by DOM-generation-script.mjs.
-                    -->
-                    <div class="pcBox" id="box-0" style="display: none;">
-                            <div class="row-0" style="width: calc(45vw);">
-                                <img class="column-0 boxCreature" data-box="0" data-row="0" data-column="0"></img>
-                                <img class="column-1 boxCreature" data-box="0" data-row="0" data-column="1"></img>
-                                <img class="column-2 boxCreature" data-box="0" data-row="0" data-column="2"></img>
-                                <img class="column-3 boxCreature" data-box="0" data-row="0" data-column="3"></img>
-                                <img class="column-4 boxCreature" data-box="0" data-row="0" data-column="4"></img>
-                            </div>
-                            <div class="row-1" style="width: calc(45vw);">
-                                <img class="column-0 boxCreature" data-box="0" data-row="1" data-column="0"></img>
-                                <img class="column-1 boxCreature" data-box="0" data-row="1" data-column="1"></img>
-                                <img class="column-2 boxCreature" data-box="0" data-row="1" data-column="2"></img>
-                                <img class="column-3 boxCreature" data-box="0" data-row="1" data-column="3"></img>
-                                <img class="column-4 boxCreature" data-box="0" data-row="1" data-column="4"></img>
-                            </div>
-                            <div class="row-2" style="width: calc(45vw);">
-                                <img class="column-0 boxCreature" data-box="0" data-row="2" data-column="0"></img>
-                                <img class="column-1 boxCreature" data-box="0" data-row="2" data-column="1"></img>
-                                <img class="column-2 boxCreature" data-box="0" data-row="2" data-column="2"></img>
-                                <img class="column-3 boxCreature" data-box="0" data-row="2" data-column="3"></img>
-                                <img class="column-4 boxCreature" data-box="0" data-row="2" data-column="4"></img>
-                            </div>
-                            <div class="row-3" style="width: calc(45vw);">
-                                <img class="column-0 boxCreature" data-box="0" data-row="3" data-column="0"></img>
-                                <img class="column-1 boxCreature" data-box="0" data-row="3" data-column="1"></img>
-                                <img class="column-2 boxCreature" data-box="0" data-row="3" data-column="2"></img>
-                                <img class="column-3 boxCreature" data-box="0" data-row="3" data-column="3"></img>
-                                <img class="column-4 boxCreature" data-box="0" data-row="3" data-column="4"></img>
-                            </div>
-                    </div>
- 
-                </div>
-             </div>
-
-        </div>
-    
-        <div id="saveEditor">
-            <div id="pokemon" data-is-party="none" data-is-box="none" data-index="-1">
-                <img id="displayPkmn">
-                <input type="text" id="name" maxlength="11">
-                <p id="level"></p>
-                <div id="moves">
-                    <div id="move-1" class="moveBox"></div>
-                    <div id="move-2" class="moveBox"></div>
-                    <div id="move-3" class="moveBox"></div>
-                    <div id="move-4" class="moveBox"></div>
-                </div>
-
-                <!-- <object data="./assets/stats-display/base.svg" type="image/svg+xml" id="statWheel"></object> -->
-                <svg
-                    version="1.1"
-                    width="300" height="300"
-                    viewBox="0 0 350 350"
-                    xmlns="http://www.w3.org/2000/svg"
-                    id="statWheel"
-                >
-
-                    <polygon 
-                        id="base" 
-                        points = ""
-                        stroke="transparent" 
-                        fill="#D2D2D0" 
-                        stroke-width="5"
-
-                        data-hp=""
-                        data-atk=""
-                        data-def=""
-                        data-spd=""
-                        data-spc=""
-                    />
-                    
-                    <polyline 
-                        id="stats" 
-                        points = ""
-                        stroke="transparent" 
-                        fill="#9699E8" 
-                        stroke-width="5"
-                    />
-
-                    <script href="./scripts/stats-display-script.js" type="module">
-                    </script>
-                </svg>
-
-            </div>
-        </div>
     </div>
     
 

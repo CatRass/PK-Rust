@@ -1,10 +1,9 @@
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 const { invoke } = window.__TAURI__.tauri
 
-import {generateBoxes} from "./DOM-generation-script.js";
 import {drawStats} from "./stats-display-script.js";
 
-generateBoxes();
+// generateBoxes();
 
 let jsonSave;
 let currentBox = 0;
@@ -175,6 +174,8 @@ window.addEventListener("DOMContentLoaded", () => {
     creatureButtons.forEach((creature) => {
         creature.addEventListener("click", (e) => {
             e.preventDefault();
+
+            console.log("clicked")
 
             let config = {
                 isBox: "false",
