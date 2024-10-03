@@ -2,7 +2,8 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 #![allow(non_snake_case)]
 
-use PKRust;
+use pkmnLib as PKRust;
+pub mod pkmnLib;
 
 fn main() {
 
