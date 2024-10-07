@@ -18,12 +18,6 @@ pub mod PkmnSpecies;
 pub mod PkmnStats;
 
 #[derive(Debug)]
-enum StatusCondition {
-
-}
-
-
-#[derive(Debug)]
 pub struct Pokemon {
     nickname:   String,
     species:    Species,
