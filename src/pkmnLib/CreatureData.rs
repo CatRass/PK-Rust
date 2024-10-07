@@ -9,54 +9,17 @@
 use std::fs;
 
 use PkmnType::Type;
+use PkmnMove::Move;
+use super::addresses::{MOVE_OFF,PP_OFF};
+
 pub mod PkmnType;
-// pub mod PkmnType as Type;
+pub mod PkmnMove;
 
 #[derive(Debug)]
 enum StatusCondition {
 
 }
 
-
-#[derive(Debug)]
-
-pub struct Move {
-    index: u16,
-    typing: Type,
-    name: String,
-    pp: u16,
-    ppup: u8
-}
-impl Move {
-    /// Constructor for a Move, given an input move index
-    pub(crate) fn get(index: u16, pp: u16, ppup: u8) -> Move {
-        let moveFile = fs::read_to_string("./data/moves.pkmn").unwrap();
-        let strIndex = format!("{:03}",index);
-        let mut moveLine: &str = "No Move found";
-
-        for line in moveFile.lines() {
-            if line.contains(&strIndex) {
-                moveLine = line;
-                break;
-            }
-        }
-
-        let parsedMove: Vec<&str> = moveLine.split(" ").collect();
-        let name = parsedMove[1].to_string().replacen('+', " ", 1);
-        let typing = Type::get(&parsedMove[2].parse::<i16>().unwrap());
-
-        return Move{index,typing,name,pp,ppup};
-    }
-    /// Constructor for an empty Move slot
-    pub(crate) fn empty() -> Move {
-        return Move{index:0, typing: Type::Null, name: String::from("Null"), pp:0, ppup:0}
-    }
-    /// Returns the info on a Pokemons moves for printing
-    fn to_string(&self) -> String {
-        return format!("{} PP: {} PP Up: {}", self.name, self.pp, self.ppup);
-    }
-
-}
 
 #[derive(Debug)]
 
@@ -222,3 +185,23 @@ impl Pokemon {
     }
 }
 
+/// Function for retrieving data about Pokemons moves.
+pub fn getPokemonMoves(save: &Vec<u8>, currAddr: &usize) -> Vec<Move>{
+    let mut returnVec: Vec<Move> = Vec::new();
+    let moveAddr = currAddr + MOVE_OFF;
+
+    for moves in 0..4 {
+        let moveIndex = save[moveAddr+moves] as u16;
+        let ppStr = format!("{:08b}",save[currAddr+PP_OFF+moves]);
+        let (ppUp,pp) = ppStr.split_at(2);
+        let currPP = u16::from_str_radix(pp, 2).unwrap();
+        let currPPUp = u8::from_str_radix(ppUp, 2).unwrap();
+        if moveIndex == 0 {
+            returnVec.push(Move::empty());
+        } else {
+            returnVec.push(Move::get(moveIndex, currPP, currPPUp));
+        }
+    }
+
+    return returnVec;
+}

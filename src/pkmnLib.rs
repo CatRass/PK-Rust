@@ -4,38 +4,14 @@ use std::fs;
 use std::path::PathBuf;
 use std::process;
 
-use CreatureData::{Pokemon, Move};
+use CreatureData::*;
+use addresses::*;
+
 pub mod CreatureData;
+pub mod addresses;
 
 use utils::textDecode;
 pub mod utils;
-
-// General Starting Addresses
-const MONEY_ADDR:       usize   = 0x25F3;
-const ID_ADDR:          usize   = 0x2605;
-const NAME_ADDR:        usize   = 0x2598;
-const PARTY_ADDR:       usize   = 0x2F2C;
-const PC_ADDR:          usize   = 0x4000;
-
-// PC Offsets
-
-/// Pokemon Species Index
-const PC_PKMN_OFF:      usize   = 0x16;
-/// Original Trainer Name
-const PC_TRAINER_OFF:   usize   = 0x2AA;
-/// Pokemon Nickname Offset
-const PC_NICK_OFF:      usize   = 0x386;
-
-// Pokemon Data Offsets
-const NICK_OFF:         usize   = 0x152;
-const HP_OFF:           usize   = 0x01;
-const MOVE_OFF:         usize   = 0x08;
-const PP_OFF:           usize   = 0x1D;
-const OT_OFF:           usize   = 0x0C;
-const OTN_OFF:          usize   = 0x110;
-const EV_OFF:           usize   = 0x11;
-const STAT_OFF:         usize   = 0x22;
-const IV_OFF:           usize   = 0x1B;
 
 
 #[derive(Debug)]
@@ -137,7 +113,7 @@ impl Save {
             // Nickname Obtaining code
             let nickname = Self::getPokemonNick(&save, &nickAddress);
             // Moves Obtaining code
-            let moves = Self::getPokemonMoves(&save,&pkmnAddress);
+            let moves = getPokemonMoves(&save,&pkmnAddress);
             // EV Obtaining code
             let evs: [u16;5] = Self::getPokemonEVs(&save,&pkmnAddress);
             // Stat Obtaining Code
@@ -182,7 +158,7 @@ impl Save {
                 let currSpecies: i16 = save[pkmnAddress] as i16;
                 let hp = Self::getPokemonHP(&save, &pkmnAddress);
                 let ot = Self::getPokemonOTID(&save, &pkmnAddress);
-                let moves = Self::getPokemonMoves(&save,&pkmnAddress);
+                let moves = getPokemonMoves(&save,&pkmnAddress);
                 let nickname = Self::getPokemonNick(&save, &nickAddress);
                 let evs: [u16;5] = Self::getPokemonEVs(&save,&pkmnAddress);
                 let ivs: [u16;5] = Self::getPokemonIVs(&save,&pkmnAddress);
@@ -247,26 +223,6 @@ impl Save {
             ).unwrap();
     }
 
-    /// Function for retrieving data about Pokemons moves.
-    fn getPokemonMoves(save: &Vec<u8>, currAddr: &usize) -> Vec<Move>{
-        let mut returnVec: Vec<Move> = Vec::new();
-        let moveAddr = currAddr + MOVE_OFF;
-
-        for moves in 0..4 {
-            let moveIndex = save[moveAddr+moves] as u16;
-            let ppStr = format!("{:08b}",save[currAddr+PP_OFF+moves]);
-            let (ppUp,pp) = ppStr.split_at(2);
-            let currPP = u16::from_str_radix(pp, 2).unwrap();
-            let currPPUp = u8::from_str_radix(ppUp, 2).unwrap();
-            if moveIndex == 0 {
-                returnVec.push(Move::empty());
-            } else {
-                returnVec.push(Move::get(moveIndex, currPP, currPPUp));
-            }
-        }
-
-        return returnVec;
-    }
 
     /// Function for retrieving a Pokemons Nickname.
     /// 
