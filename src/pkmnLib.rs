@@ -4,7 +4,7 @@ use std::fs;
 use std::path::PathBuf;
 use std::process;
 
-use CreatureData::*;
+use CreatureData::Pkmn::*;
 use addresses::*;
 
 pub mod CreatureData;
