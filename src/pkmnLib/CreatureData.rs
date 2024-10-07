@@ -6,86 +6,22 @@
 /// - Various Stats
 /// - Species
 
-use std::fs;
-
 use PkmnType::Type;
 use PkmnMove::Move;
 use PkmnSpecies::Species;
+use PkmnStats::{Stats, IVs, EVs};
 use super::addresses::{MOVE_OFF,PP_OFF};
 
 pub mod PkmnType;
 pub mod PkmnMove;
 pub mod PkmnSpecies;
+pub mod PkmnStats;
 
 #[derive(Debug)]
 enum StatusCondition {
 
 }
 
-
-#[derive(Debug)]
-struct EVs {
-    hp: u16,
-    atk: u16,
-    def: u16,
-    spd: u16,
-    spc: u16
-}
-impl EVs {
-    /// Returns a string to display all EVs
-    fn to_string(&self) -> String {
-        return format!("\tHP EV: {}\n\tATK EV: {}\n\tDEF EV:{}\n\tSPD EV: {}\n\tSPCL EV: {}\n",
-                        self.hp,
-                        self.atk,
-                        self.def,
-                        self.spd,
-                        self.spc
-                    );
-    }
-}
-
-#[derive(Debug)]
-
-struct Stats {
-    hp: u16,
-    atk: u16,
-    def: u16,
-    spd: u16,
-    spc: u16
-}
-impl Stats {
-    /// Returns a string to display all stats
-    fn to_string(&self) -> String {
-        return format!("\tHP: {}\n\tATK: {}\n\tDEF:{}\n\tSPD: {}\n\tSPCL: {}\n",
-                        self.hp,
-                        self.atk,
-                        self.def,
-                        self.spd,
-                        self.spc
-                    );
-    }
-}
-
-#[derive(Debug)]
-
-struct IVs {
-    hp:  u16,
-    atk: u16,
-    def: u16,
-    spd: u16,
-    spc: u16
-}
-impl IVs {
-    /// Returns a string to display all stats
-    fn to_string(&self) -> String {
-        return format!("\tATK IV: {}\n\tDEF IV:{}\n\tSPD IV: {}\n\tSPCL IV: {}\n",
-                        self.atk,
-                        self.def,
-                        self.spd,
-                        self.spc
-                    );
-    }
-}
 
 #[derive(Debug)]
 pub struct Pokemon {
