@@ -10,10 +10,12 @@ use std::fs;
 
 use PkmnType::Type;
 use PkmnMove::Move;
+use PkmnSpecies::Species;
 use super::addresses::{MOVE_OFF,PP_OFF};
 
 pub mod PkmnType;
 pub mod PkmnMove;
+pub mod PkmnSpecies;
 
 #[derive(Debug)]
 enum StatusCondition {
@@ -22,45 +24,6 @@ enum StatusCondition {
 
 
 #[derive(Debug)]
-
-struct Species {
-    index: i16,
-    pokedex: i16,
-    name: String,
-    typing: [Type;2],
-}
-impl Species {
-    fn parse(index: i16) -> Species {
-        let speciesFile = fs::read_to_string("./data/species.pkmn").unwrap();
-        let mut parsedSpecies: &str = "No Pokemon found";
-
-        let hexIndex = format!("0x{:02X?}",index);
-        // println!("{}",hexIndex);
-        
-        for line in speciesFile.lines() {
-            if line.contains(&hexIndex) {
-                parsedSpecies = line;
-                break;
-            }
-        }
-
-        let info: Vec<&str> = parsedSpecies.split(" ").collect();
-        let pokedex = info[0].parse::<i16>().unwrap();
-        let name = info[2].to_string();
-
-        // PLEASE fix this later, I don't even want to explain what horribleness I wrote here
-        let types: Vec<&str> = info[3].trim_matches('{').trim_matches('}').split(',').collect();
-        let typing: [Type;2] = [
-                                Type::get(&(types[0].parse::<i16>().unwrap())), 
-                                Type::get(&(types[1].parse::<i16>().unwrap()))
-                                ];
-
-        return Species{index,pokedex,name,typing};
-    }
-}
-
-#[derive(Debug)]
-
 struct EVs {
     hp: u16,
     atk: u16,
@@ -125,7 +88,6 @@ impl IVs {
 }
 
 #[derive(Debug)]
-
 pub struct Pokemon {
     nickname:   String,
     species:    Species,
@@ -140,7 +102,6 @@ pub struct Pokemon {
     ivs:        IVs,
     stats:      Stats,
 }
- 
 impl Pokemon {
     /// Constructor for a Pokemon, when being read from a save file
     pub(crate) fn get(index: i16, level:i8, nickname: String, moves: Vec<Move>, ot: u16, otn: String, hp: i16, evArr: [u16;5], ivArr: [u16;5], statArr: [u16;5]) -> Pokemon {
