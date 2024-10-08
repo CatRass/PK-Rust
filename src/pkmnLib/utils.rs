@@ -77,3 +77,48 @@ pub fn textDecode(encoded: &[i16; 11]) -> String{
 // fn textEncode(decoded: &String) -> [i16; 11]{
 //     todo!("Finish this, preferrably optimised");
 // }
+
+// ================ TESTS ================ 
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn textDecode_UppercaseLetter() {
+        // Letter "P"
+        let mut letterList: [i16; 11] = [0x00; 11];
+        letterList[0] = 0x8F;
+        assert_eq!(textDecode(&letterList),"P          ");
+    }
+
+    #[test]
+    fn textDecpde_CapitalWord() {
+        // Word "POKEMON"
+        let word: [i16; 11] = [0x8F, 0x8E, 0x8A, 0x84, 0x8C, 0x8E, 0x8D, 0x00, 0x00, 0x00, 0x00];
+        assert_eq!(textDecode(&word), "POKEMON    ");
+    }
+
+    #[test]
+    fn textDecode_LowercaseLetter() {
+        // Letter "p"
+        let mut letterList: [i16; 11] = [0x00; 11];
+        letterList[0] = 0xAF;
+        assert_eq!(textDecode(&letterList), "p          ");
+    }
+
+    #[test]
+    fn textDecode_LowercaseWord() {
+        // Word "pokemon"
+        let word: [i16; 11] = [0xAF, 0xAE, 0xAA, 0xA4, 0xAC, 0xAE, 0xAD, 0x00, 0x00, 0x00, 0x00];
+        assert_eq!(textDecode(&word), "pokemon    ");
+    }
+
+    #[test]
+    fn textDecode_MixedcaseWord() {
+        // Word "Pokemon"
+        let word: [i16; 11] = [0x8F, 0xAE, 0xAA, 0xA4, 0xAC, 0xAE, 0xAD, 0x00, 0x00, 0x00, 0x00];
+        assert_eq!(textDecode(&word), "Pokemon    ");
+    }
+
+
+}
