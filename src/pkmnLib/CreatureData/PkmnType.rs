@@ -1,4 +1,5 @@
 #[derive(Debug)]
+#[derive(PartialEq)]
 pub enum Type {
     Normal      = 0,
     Fire        = 1,

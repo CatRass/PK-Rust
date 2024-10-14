@@ -38,4 +38,46 @@ impl Move {
         return format!("{} PP: {} PP Up: {}", self.name, self.pp, self.ppup);
     }
 
+    pub fn getIndex(&self) -> &u16 {
+        return &self.index;
+    }
+
+    pub fn getTyping(&self) -> &Type {
+        return &self.typing;
+    }
+
+    pub fn getName(&self) -> &String {
+        return &self.name;
+    }
+
+    pub fn getPP(&self) -> &u16 {
+        return &self.pp;
+    }
+
+    pub fn getPPUp(&self) -> &u8 {
+        return &self.ppup;
+    }
+}
+
+
+#[cfg(test)]
+pub mod tests {
+    use super::*;
+
+    #[test]
+    fn get_CorrectMove() {
+        let testMove:Move = Move::get(001, 3, 0);
+
+        assert_eq!(testMove.getName(), "Pound");
+        assert_eq!(testMove.getTyping(), &Type::Normal);
+    }
+
+    #[test]
+    fn correctStringMove() {
+        let testMove:Move = Move::get(001, 5, 10);
+        let stringMove: String = testMove.to_string();
+
+        assert_eq!(stringMove, "Pound PP: 5 PP Up: 10")
+    }
+
 }
