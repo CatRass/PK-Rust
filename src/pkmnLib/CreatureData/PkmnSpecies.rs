@@ -22,7 +22,7 @@ impl Species {
         let mut parsedSpecies: &str = "No Pokemon found";
 
         let hexIndex = format!("0x{:02X?}",index);
-        println!("{}",hexIndex);
+        // println!("{}",hexIndex);
         
         for line in speciesFile.lines() {
             if line.contains(&hexIndex) {
