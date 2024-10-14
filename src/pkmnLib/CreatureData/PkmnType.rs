@@ -24,7 +24,8 @@ pub enum Type {
     Null
 }
 impl Type {
-    pub fn get(index: &i16) -> Type{
+    /// Index is not borrowed as it is used by the resulting Type Object
+    pub fn get(index: i16) -> Type{
         let returnPkmnType = match index {
             0   => Type::Normal   ,
             1   => Type::Fire     ,
@@ -49,5 +50,26 @@ impl Type {
         };
 
         returnPkmnType
+    }
+}
+
+#[cfg(test)]
+pub mod tests {
+    use super::*;
+
+    #[test]
+    fn testCorrectGet() {
+        let testType:Type = Type::get(0);
+        let correctType:Type = Type::Normal;
+
+        assert_eq!(testType, correctType);
+    }
+
+    #[test]
+    fn getIncorrectGet() {
+        let testType:Type = Type::get(19);
+        let correctType:Type = Type::Null;
+
+        assert_eq!(testType, correctType);
     }
 }

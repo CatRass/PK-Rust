@@ -25,7 +25,7 @@ impl Move {
 
         let parsedMove: Vec<&str> = moveLine.split(" ").collect();
         let name = parsedMove[1].to_string().replacen('+', " ", 1);
-        let typing = Type::get(&parsedMove[2].parse::<i16>().unwrap());
+        let typing = Type::get(parsedMove[2].parse::<i16>().unwrap());
 
         return Move{index,typing,name,pp,ppup};
     }
