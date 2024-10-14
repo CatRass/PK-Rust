@@ -38,8 +38,8 @@ impl Species {
         // PLEASE fix this later, I don't even want to explain what horribleness I wrote here
         let types: Vec<&str> = info[3].trim_matches('{').trim_matches('}').split(',').collect();
         let typing: [Type;2] = [
-                                Type::get((types[0].parse::<i16>().unwrap())), 
-                                Type::get((types[1].parse::<i16>().unwrap()))
+                                Type::get(types[0].parse::<i16>().unwrap()), 
+                                Type::get(types[1].parse::<i16>().unwrap())
                                 ];
 
         return Species{index,pokedex,name,typing};
