@@ -2,12 +2,10 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 #![allow(non_snake_case)]
 
-pub mod pkmnLib;
+pub mod PKRust;
 
 fn main() {
-
-    // let saveFile = PKRust::Save::load(&std::path::PathBuf::from("./test/POKEMON YELLOW 2.sav"));
-    let saveFile = pkmnLib::SaveLoader::Save::load(&std::path::PathBuf::from("./test/POKEMON YELLOW 2.sav"));
+    let saveFile = PKRust::SaveLoader::Save::load(&std::path::PathBuf::from("./test/POKEMON YELLOW 2.sav"));
     saveFile.print();
     
 }
