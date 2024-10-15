@@ -1,7 +1,6 @@
 use super::PkmnMove::Move;
 use super::PkmnSpecies::Species;
 use super::PkmnStats::{Stats, IVs, EVs};
-use super::addresses::{MOVE_OFF,PP_OFF};
 
 
 #[derive(Debug)]
@@ -104,26 +103,6 @@ impl Pokemon {
 
 }
 
-/// Function for retrieving data about Pokemons moves.
-pub fn getPokemonMoves(save: &Vec<u8>, currAddr: &usize) -> Vec<Move>{
-    let mut returnVec: Vec<Move> = Vec::new();
-    let moveAddr = currAddr + MOVE_OFF;
-
-    for moves in 0..4 {
-        let moveIndex = save[moveAddr+moves] as u16;
-        let ppStr = format!("{:08b}",save[currAddr+PP_OFF+moves]);
-        let (ppUp,pp) = ppStr.split_at(2);
-        let currPP = u16::from_str_radix(pp, 2).unwrap();
-        let currPPUp = u8::from_str_radix(ppUp, 2).unwrap();
-        if moveIndex == 0 {
-            returnVec.push(Move::empty());
-        } else {
-            returnVec.push(Move::get(moveIndex, currPP, currPPUp));
-        }
-    }
-
-    return returnVec;
-}
 
 
 #[cfg(test)]

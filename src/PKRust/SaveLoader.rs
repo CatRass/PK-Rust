@@ -2,7 +2,7 @@ use std::fs;
 use std::path::PathBuf;
 use std::process;
 
-
+use super::CreatureData::PkmnMove::Move;
 use super::CreatureData::Pkmn::*;
 use super::addresses::*;
 use super::utils::textDecode;
@@ -30,12 +30,14 @@ impl Save {
                     }
     } 
 
-    pub fn load(file: &PathBuf) -> Save{
+    pub fn load(file: &'static str) -> Save{
 
-        let save = match fs::read(file) {
+        let filePathBuf:PathBuf = std::path::PathBuf::from(file);
+
+        let save = match fs::read(filePathBuf) {
             Ok(result)                => result,
             Err(error)                  => match error.kind() {
-                std::io::ErrorKind::NotFound   => {eprintln!("Save: {} does not exist",file.to_str().unwrap()); process::exit(1);}
+                std::io::ErrorKind::NotFound   => {eprintln!("Save: {} does not exist",file); process::exit(1);}
                 _                              => {eprintln!("Error: {}",error.kind()); process::exit(1);}
             }
         };
@@ -107,7 +109,7 @@ impl Save {
             // Nickname Obtaining code
             let nickname = Self::getPokemonNick(&save, &nickAddress);
             // Moves Obtaining code
-            let moves = getPokemonMoves(&save,&pkmnAddress);
+            let moves = Self::getPokemonMoves(&save,&pkmnAddress);
             // EV Obtaining code
             let evs: [u16;5] = Self::getPokemonEVs(&save,&pkmnAddress);
             // Stat Obtaining Code
@@ -152,7 +154,7 @@ impl Save {
                 let currSpecies: i16 = save[pkmnAddress] as i16;
                 let hp = Self::getPokemonHP(&save, &pkmnAddress);
                 let ot = Self::getPokemonOTID(&save, &pkmnAddress);
-                let moves = getPokemonMoves(&save,&pkmnAddress);
+                let moves = Self::getPokemonMoves(&save,&pkmnAddress);
                 let nickname = Self::getPokemonNick(&save, &nickAddress);
                 let evs: [u16;5] = Self::getPokemonEVs(&save,&pkmnAddress);
                 let ivs: [u16;5] = Self::getPokemonIVs(&save,&pkmnAddress);
@@ -217,7 +219,6 @@ impl Save {
             ).unwrap();
     }
 
-
     /// Function for retrieving a Pokemons Nickname.
     /// 
     /// **Note**: This function will automatically decode it into a String
@@ -256,6 +257,28 @@ impl Save {
         
         return evs;
     }
+
+    /// Function for retrieving data about Pokemons moves.
+    fn getPokemonMoves(save: &Vec<u8>, currAddr: &usize) -> Vec<Move>{
+    let mut returnVec: Vec<Move> = Vec::new();
+    let moveAddr = currAddr + MOVE_OFF;
+
+    for moves in 0..4 {
+        let moveIndex = save[moveAddr+moves] as u16;
+        let ppStr = format!("{:08b}",save[currAddr+PP_OFF+moves]);
+        let (ppUp,pp) = ppStr.split_at(2);
+        let currPP = u16::from_str_radix(pp, 2).unwrap();
+        let currPPUp = u8::from_str_radix(ppUp, 2).unwrap();
+        if moveIndex == 0 {
+            returnVec.push(Move::empty());
+        } else {
+            returnVec.push(Move::get(moveIndex, currPP, currPPUp));
+        }
+    }
+
+    return returnVec;
+}
+
 
     /// Function for retrieving a Pokemons Individual Values 
     /// (Also known as Determinant Values)
