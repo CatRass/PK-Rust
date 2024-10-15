@@ -4,8 +4,8 @@ use std::process;
 
 use super::CreatureData::PkmnMove::Move;
 use super::CreatureData::Pkmn::*;
-use super::addresses::*;
-use super::utils::textDecode;
+use super::Addresses::*;
+use super::Utils::textDecode;
 
 
 #[derive(Debug)]

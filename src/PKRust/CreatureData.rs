@@ -6,9 +6,6 @@
 /// - Various Stats
 /// - Species
 
-use PkmnType::Type;
-use super::addresses;
-
 pub mod Pkmn;
 pub mod PkmnType;
 pub mod PkmnMove;

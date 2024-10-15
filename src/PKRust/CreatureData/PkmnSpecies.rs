@@ -1,5 +1,5 @@
 use std::fs;
-use super::Type;
+use super::PkmnType::Type;
 
 #[derive(Debug)]
 /**

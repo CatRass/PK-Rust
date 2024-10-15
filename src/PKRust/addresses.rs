@@ -1,4 +1,3 @@
-
 // General Starting Addresses
 pub const MONEY_ADDR:       usize   = 0x25F3;
 pub const ID_ADDR:          usize   = 0x2605;
