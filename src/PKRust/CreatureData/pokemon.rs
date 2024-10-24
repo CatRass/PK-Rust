@@ -21,7 +21,7 @@ pub struct Pokemon {
 impl Pokemon {
     /// Constructor for a Pokemon, when being read from a save file
     pub fn get(index: i16, level:i8, nickname: String, moves: Vec<Move>, ot: u16, otn: String, hp: i16, evArr: [u16;5], ivArr: [u16;5], statArr: [u16;5]) -> Pokemon {
-        let species = Species::parse(index);
+        let species = Species::parse(index).unwrap();
 
         let evs = EVs{hp: evArr[0], atk: evArr[1], def: evArr[2], spd: evArr[3], spc: evArr[4]};
         let ivs = IVs{atk: ivArr[0], def: ivArr[1], spd: ivArr[2], spc: ivArr[3], hp: ivArr[4]};
