@@ -87,4 +87,12 @@ mod tests {
         assert_eq!(&correctSpecies.getPokedex(), &parsedSpecies.getPokedex());
     }
 
+    #[test]
+    fn parse_testIncorrectIndex() {
+        let incorrectID: i16 = 0x00;
+
+        assert!(Species::parse(incorrectID).is_err());
+        assert_eq!(Species::parse(incorrectID).unwrap_err(), "Species with ID 0x00 not found.");
+    }
+
 }
