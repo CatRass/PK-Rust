@@ -272,7 +272,7 @@ impl Save {
         if moveIndex == 0 {
             returnVec.push(Move::empty());
         } else {
-            returnVec.push(Move::get(moveIndex, currPP, currPPUp));
+            returnVec.push(Move::get(moveIndex, currPP, currPPUp).unwrap());
         }
     }
 

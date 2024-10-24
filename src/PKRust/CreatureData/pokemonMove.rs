@@ -11,7 +11,7 @@ pub struct Move {
 }
 impl Move {
     /// Constructor for a Move, given an input move index
-    pub fn get(index: u16, pp: u16, ppup: u8) -> Move {
+    pub fn get(index: u16, pp: u16, ppup: u8) -> Result<Move, String> {
         let moveFile = fs::read_to_string("./data/moves.pkmn").unwrap();
         let strIndex = format!("{:03}",index);
         let mut moveLine: &str = "No Move found";
@@ -25,9 +25,9 @@ impl Move {
 
         let parsedMove: Vec<&str> = moveLine.split(" ").collect();
         let name = parsedMove[1].to_string().replacen('+', " ", 1);
-        let typing = Type::get(parsedMove[2].parse::<i16>().unwrap());
+        let typing = Type::get(parsedMove[2].parse::<i16>().map_err(|_| format!("Move with ID {index} not found."))?);
 
-        return Move{index,typing,name,pp,ppup};
+        return Ok(Move{index,typing,name,pp,ppup});
     }
     /// Constructor for an empty Move slot
     pub fn empty() -> Move {
@@ -66,7 +66,7 @@ pub mod tests {
 
     #[test]
     fn get_testCorrectMove() {
-        let testMove:Move = Move::get(001, 3, 0);
+        let testMove:Move = Move::get(001, 3, 0).unwrap();
 
         assert_eq!(testMove.getName(), "Pound");
         assert_eq!(testMove.getTyping(), &Type::Normal);
@@ -74,20 +74,20 @@ pub mod tests {
 
     #[test]
     fn to_string_testCorrectStringMove() {
-        let testMove:Move = Move::get(001, 5, 10);
+        let testMove:Move = Move::get(001, 5, 10).unwrap();
         let stringMove: String = testMove.to_string();
 
         assert_eq!(stringMove, "Pound PP: 5 PP Up: 10")
     }
 
     #[test]
-    fn get_testIncorrectMoveIndex() {
+    fn get_testIncorrectMoveTyping() {
         let index = 000;
 
         // Assert that an error is returned
         assert!(Move::get(index, 0, 0).is_err());
         // Assert that the error is correct
-        assert_eq!(Move::get(index, 0, 0), "Move with ID 000 not found.");
+        assert_eq!(Move::get(index, 0, 0).unwrap_err(), "Move with ID 0 not found.");
     }
 
 }
