@@ -6,8 +6,8 @@
 /// - Various Stats
 /// - Species
 
-pub mod Pkmn;
-pub mod PkmnType;
-pub mod PkmnMove;
-pub mod PkmnSpecies;
-pub mod PkmnStats;
+pub mod pokemon;
+pub mod pokemonType;
+pub mod pokemonMove;
+pub mod pokemonSpecies;
+pub mod pokemonStats;

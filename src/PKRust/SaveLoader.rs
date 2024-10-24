@@ -2,10 +2,10 @@ use std::fs;
 use std::path::PathBuf;
 use std::process;
 
-use super::CreatureData::PkmnMove::Move;
-use super::CreatureData::Pkmn::*;
-use super::Addresses::*;
-use super::Utils::textDecode;
+use super::CreatureData::pokemonMove::Move;
+use super::CreatureData::pokemon::*;
+use super::addresses::*;
+use super::utils::textDecode;
 
 
 #[derive(Debug)]

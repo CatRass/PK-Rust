@@ -1,5 +1,5 @@
 use std::fs;
-use super::PkmnType::Type;
+use super::pokemonType::Type;
 
 #[derive(Debug)]
 /**

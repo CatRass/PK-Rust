@@ -3,6 +3,6 @@
 pub mod PKRust;
 
 fn main() {
-    let saveFile = PKRust::SaveLoader::Save::load("./test/POKEMON YELLOW 2.sav");
+    let saveFile = PKRust::saveLoader::Save::load("./test/POKEMON YELLOW 2.sav");
     saveFile.print();
 }

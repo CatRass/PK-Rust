@@ -1,6 +1,6 @@
-use super::PkmnMove::Move;
-use super::PkmnSpecies::Species;
-use super::PkmnStats::{Stats, IVs, EVs};
+use super::pokemonMove::Move;
+use super::pokemonSpecies::Species;
+use super::pokemonStats::{Stats, IVs, EVs};
 
 
 #[derive(Debug)]
