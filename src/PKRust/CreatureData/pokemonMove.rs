@@ -65,7 +65,7 @@ pub mod tests {
     use super::*;
 
     #[test]
-    fn get_CorrectMove() {
+    fn get_testCorrectMove() {
         let testMove:Move = Move::get(001, 3, 0);
 
         assert_eq!(testMove.getName(), "Pound");
@@ -73,11 +73,21 @@ pub mod tests {
     }
 
     #[test]
-    fn correctStringMove() {
+    fn to_string_testCorrectStringMove() {
         let testMove:Move = Move::get(001, 5, 10);
         let stringMove: String = testMove.to_string();
 
         assert_eq!(stringMove, "Pound PP: 5 PP Up: 10")
+    }
+
+    #[test]
+    fn get_testIncorrectMoveIndex() {
+        let index = 000;
+
+        // Assert that an error is returned
+        assert!(Move::get(index, 0, 0).is_err());
+        // Assert that the error is correct
+        assert_eq!(Move::get(index, 0, 0), "Move with ID 000 not found.");
     }
 
 }
