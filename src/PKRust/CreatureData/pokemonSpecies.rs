@@ -17,9 +17,9 @@ pub struct Species {
     typing: [Type;2],
 }
 impl Species {
-    pub fn parse(index: i16) -> Species {
+    pub fn parse(index: i16) -> Result<Species, String> {
         let speciesFile = fs::read_to_string("./data/species.pkmn").unwrap();
-        let mut parsedSpecies: &str = "No Pokemon found";
+        let mut parsedSpecies: &str = " ";
 
         let hexIndex = format!("0x{:02X?}",index);
         // println!("{}",hexIndex);
@@ -32,7 +32,7 @@ impl Species {
         }
 
         let info: Vec<&str> = parsedSpecies.split(" ").collect();
-        let pokedex = info[0].parse::<i16>().unwrap();
+        let pokedex = info[0].parse::<i16>().map_err(|_| format!("Species with ID {hexIndex} not found."))?;
         let name = info[2].to_string();
 
         // PLEASE fix this later, I don't even want to explain what horribleness I wrote here
@@ -42,7 +42,7 @@ impl Species {
                                 Type::get(types[1].parse::<i16>().unwrap())
                                 ];
 
-        return Species{index,pokedex,name,typing};
+        return Ok(Species{index,pokedex,name,typing});
     }
 
     pub fn getIndex(&self) -> &i16 {
@@ -71,7 +71,7 @@ mod tests {
     fn parse_testCorrectPokemon() {
         // Id of the pokemon
         let id = 0x99;
-        let parsedSpecies: Species = Species::parse(id);
+        let parsedSpecies: Species = Species::parse(id).unwrap();
 
         let correctSpecies:Species = Species {
             index: 0x99, 
@@ -85,6 +85,16 @@ mod tests {
         assert_eq!(&correctSpecies.getIndex(), &parsedSpecies.getIndex());
         // Assert Pokedex
         assert_eq!(&correctSpecies.getPokedex(), &parsedSpecies.getPokedex());
+    }
+
+    #[test]
+    fn parse_testIncorrectIndex() {
+        let incorrectID: i16 = 0x00;
+
+        // Assert that an error is returned
+        assert!(Species::parse(incorrectID).is_err());
+        // Assert that the error is the one we expect
+        assert_eq!(Species::parse(incorrectID).unwrap_err(), "Species with ID 0x00 not found.");
     }
 
 }
