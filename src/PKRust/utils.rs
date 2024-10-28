@@ -81,6 +81,8 @@ pub fn textDecode(encoded: &[i16; 11]) -> String{
 // ================ TESTS ================ 
 #[cfg(test)]
 mod tests {
+    use std::fs;
+
     use super::*;
 
     #[test]
@@ -120,5 +122,14 @@ mod tests {
         assert_eq!(textDecode(&word), "Pokemon    ");
     }
 
+    #[test]
+    fn integrityCheck_Correct() {
+        let filePath = "./test/POKEMON YELLOW 2.sav";
+        let saveFile = fs::read(filePath).unwrap();
+
+        let fileHasIntegrity = integrityCheck(saveFile);
+
+        assert_eq!(fileHasIntegrity, true);
+    }
 
 }
