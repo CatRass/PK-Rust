@@ -5,7 +5,7 @@ use std::process;
 use super::CreatureData::pokemonMove::Move;
 use super::CreatureData::pokemon::*;
 use super::addresses::*;
-use super::utils::textDecode;
+use super::utils::{textDecode, integrityCheck};
 
 
 #[derive(Debug)]
@@ -30,10 +30,11 @@ impl Save {
                     }
     } 
 
-    pub fn load(file: &'static str) -> Save{
+    pub fn load(file: &'static str) -> Result<Save, String>{
 
         let filePathBuf:PathBuf = std::path::PathBuf::from(file);
 
+        // First we load the save file and check for if it exists
         let save = match fs::read(filePathBuf) {
             Ok(result)                => result,
             Err(error)                  => match error.kind() {
@@ -42,6 +43,11 @@ impl Save {
             }
         };
 
+        // Then we check if the file has integrity (Check if it's valid)
+        if integrityCheck(&save) == false {
+            return Err(String::from("Error: File does not seem to be a Gen 1 Save File"));
+        }
+
         let pc = Self::getPCBoxes(&save);
 
         let money = Self::getMoney(&save);
@@ -49,7 +55,7 @@ impl Save {
         let party:  Vec<Pokemon> = Self::getParty(&save);
         let trainer = textDecode(&Self::getName(&save));
 
-        return Save{trainer, money, id, party, pc}
+        return Ok(Save{trainer, money, id, party, pc});
 
     }
 

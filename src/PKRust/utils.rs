@@ -89,7 +89,7 @@ pub fn textDecode(encoded: &[i16; 11]) -> String{
 //     todo!("Finish this, preferrably optimised");
 // }
 
-pub fn integrityCheck(saveFile: Vec<u8>) -> bool {
+pub fn integrityCheck(saveFile: &Vec<u8>) -> bool {
     // We will be using the "easy" way, as shown in the
     // Checksum section of the bulbapedia https://m.bulbapedia.bulbagarden.net/wiki/Save_data_structure_(Generation_I)#Checksum
 
@@ -160,7 +160,7 @@ mod tests {
 
         for filePath in testFiles {
             let saveFile = fs::read(filePath).unwrap();
-            let fileHasIntegrity = integrityCheck(saveFile);
+            let fileHasIntegrity = integrityCheck(&saveFile);
     
             assert_eq!(fileHasIntegrity, true);
         }
@@ -173,7 +173,7 @@ mod tests {
 
         for filePath in testFiles {
             let saveFile = fs::read(filePath).unwrap();
-            let fileHasIntegrity = integrityCheck(saveFile);
+            let fileHasIntegrity = integrityCheck(&saveFile);
     
             assert_eq!(fileHasIntegrity, true);
         }
