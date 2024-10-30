@@ -1,6 +1,5 @@
 use std::fs;
 use std::path::PathBuf;
-use std::process;
 
 use super::CreatureData::pokemonMove::Move;
 use super::CreatureData::pokemon::*;
@@ -35,11 +34,12 @@ impl Save {
         let filePathBuf:PathBuf = std::path::PathBuf::from(file);
 
         // First we load the save file and check for if it exists
+        // If not, an error result will be returned
         let save = match fs::read(filePathBuf) {
             Ok(result)                => result,
             Err(error)                  => match error.kind() {
-                std::io::ErrorKind::NotFound   => {eprintln!("Save: {} does not exist",file); process::exit(1);}
-                _                              => {eprintln!("Error: {}",error.kind()); process::exit(1);}
+                std::io::ErrorKind::NotFound   => return Err(format!("Save: {} does not exist",file)),
+                _                              => return Err(format!("Error: {}",error.kind()))
             }
         };
 
@@ -310,6 +310,40 @@ impl Save {
                             ];
         
         return ivs;
+    }
+
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn load_InvalidFile() {
+        let fileName = "./test/POKEMON CRYSTAL.sav";
+        let saveFile = Save::load(fileName);
+
+        assert!(saveFile.is_err());
+        assert_eq!(saveFile.unwrap_err(), "Error: File does not seem to be a Gen 1 Save File");
+        
+    }
+
+    #[test]
+    fn load_ValidFile() {
+        let fileName = "./test/POKEMON Blue.sav";
+        let saveFile = Save::load(fileName);
+
+        assert!(saveFile.is_ok());
+    }
+
+    #[test]
+    fn load_NonexistentFile() {
+        let fileName = "./test/Nonexistent File.sav";
+        let saveFile = Save::load(fileName);
+
+        assert!(saveFile.is_err());
+        assert_eq!(saveFile.unwrap_err(), format!("Save: {} does not exist",fileName));
+        
     }
 
 }
