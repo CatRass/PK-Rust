@@ -180,4 +180,14 @@ mod tests {
 
     }
 
+    #[test]
+    fn integrityCheck_Incorrect_PkmnCrystal() {
+
+        let filePath = "./test/POKEMON CRYSTAL.sav";
+        let saveFile = fs::read(filePath).unwrap();
+        let fileHasIntegrity = integrityCheck(&saveFile);
+
+        assert_eq!(fileHasIntegrity, false);
+    }
+
 }
