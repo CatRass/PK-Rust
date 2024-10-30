@@ -1,3 +1,14 @@
+use super::addresses::{CHECKSUM_END_ADDR, CHECKSUM_RESULT, CHECKSUM_START_ADDR};
+use std::num::Wrapping;
+
+pub fn splitByte(unsignedByte: &u8) -> (u8, u8) {
+    let byteStr = format!("{:08b}",unsignedByte);
+    let (firstByteStr, secondByteStr) = byteStr.split_at(4);
+    let firstByte:u8 = u8::from_str_radix(firstByteStr, 2).unwrap();
+    let secondByte:u8 = u8::from_str_radix(secondByteStr, 2).unwrap();
+    
+    return (firstByte, secondByte);
+}
 
 /// Decodes text, as text in most games uses character encoding
 /// **TODO**: Optimise this too. Yanderedev levels of code
@@ -78,9 +89,32 @@ pub fn textDecode(encoded: &[i16; 11]) -> String{
 //     todo!("Finish this, preferrably optimised");
 // }
 
+pub fn integrityCheck(saveFile: &Vec<u8>) -> bool {
+    // We will be using the "easy" way, as shown in the
+    // Checksum section of the bulbapedia https://m.bulbapedia.bulbagarden.net/wiki/Save_data_structure_(Generation_I)#Checksum
+
+    // We also need to use "Wrapping" here because the checksum relies
+    // on integer over and underflow, but Rust does not allow that on default
+    // integers due to type safety.
+    let mut checksumVal: Wrapping<u8> = Wrapping(0);
+    
+    // We use the main data checksum
+    // https://m.bulbapedia.bulbagarden.net/wiki/Save_data_structure_(Generation_I)#bank1_checksum
+    let checksumRes: Wrapping<u8> = Wrapping(saveFile[CHECKSUM_RESULT]);
+
+    for byte in  CHECKSUM_START_ADDR..CHECKSUM_END_ADDR {
+        checksumVal += &saveFile[byte];
+    }
+
+    return !checksumVal == checksumRes;
+    
+}
+
 // ================ TESTS ================ 
 #[cfg(test)]
 mod tests {
+    use std::fs;
+
     use super::*;
 
     #[test]
@@ -120,5 +154,40 @@ mod tests {
         assert_eq!(textDecode(&word), "Pokemon    ");
     }
 
+    #[test]
+    fn integrityCheck_Correct_PkmnYellow() {
+        let testFiles:Vec<&str> = vec!["./test/POKEMON YELLOW.sav", "./test/POKEMON YELLOW 2.sav"];
+
+        for filePath in testFiles {
+            let saveFile = fs::read(filePath).unwrap();
+            let fileHasIntegrity = integrityCheck(&saveFile);
+    
+            assert_eq!(fileHasIntegrity, true);
+        }
+    }
+
+    #[test]
+    fn integrityCheck_Correct_PkmnBlue() {
+
+        let testFiles:Vec<&str> = vec!["./test/POKEMON BLUE.sav", "./test/Pokeblue.sav"];
+
+        for filePath in testFiles {
+            let saveFile = fs::read(filePath).unwrap();
+            let fileHasIntegrity = integrityCheck(&saveFile);
+    
+            assert_eq!(fileHasIntegrity, true);
+        }
+
+    }
+
+    #[test]
+    fn integrityCheck_Incorrect_PkmnCrystal() {
+
+        let filePath = "./test/POKEMON CRYSTAL.sav";
+        let saveFile = fs::read(filePath).unwrap();
+        let fileHasIntegrity = integrityCheck(&saveFile);
+
+        assert_eq!(fileHasIntegrity, false);
+    }
 
 }
