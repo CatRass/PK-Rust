@@ -11,7 +11,6 @@ pub fn splitByte(unsignedByte: &u8) -> (u8, u8) {
 }
 
 /// Decodes text, as text in most games uses character encoding
-/// **TODO**: Optimise this too. Yanderedev levels of code
 pub fn textDecode(encoded: &[i16; 11]) -> String{
     let mut encodedText: Vec<u8> = Vec::new();
 
@@ -87,7 +86,7 @@ pub fn textDecode(encoded: &[i16; 11]) -> String{
 }
 
 /// Encodes text into the character encoding used by Gen 1
-fn textEncode(decoded: &String) -> [i16; 11]{
+pub fn textEncode(decoded: &String) -> [i16; 11]{
     let mut encoded: [i16; 11] = [0; 11];
 
     for index in 0..11 {
