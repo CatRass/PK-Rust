@@ -330,7 +330,7 @@ mod tests {
 
     #[test]
     fn load_ValidFile() {
-        let fileName = "./test/POKEMON Blue.sav";
+        let fileName = "./test/POKEMON BLUE.sav";
         let saveFile = Save::load(fileName);
 
         assert!(saveFile.is_ok());
