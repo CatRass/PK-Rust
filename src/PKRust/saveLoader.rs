@@ -31,9 +31,11 @@ impl Save {
                     }
     } 
 
-    pub fn load(file: &'static str) -> Result<Save, String>{
+    pub fn load(file: &str) -> Result<Save, String>{
 
         let filePathBuf:PathBuf = std::path::PathBuf::from(file);
+
+        println!("{:?}", filePathBuf);
 
         // First we load the save file and check for if it exists
         // If not, an error result will be returned
@@ -41,7 +43,7 @@ impl Save {
             Ok(result)                => result,
             Err(error)                  => match error.kind() {
                 std::io::ErrorKind::NotFound   => return Err(format!("Save: {} does not exist",file)),
-                _                              => return Err(format!("Error: {}",error.kind()))
+                _                              => return Err(format!("Unexpected Error: {}",error.kind()))
             }
         };
 
