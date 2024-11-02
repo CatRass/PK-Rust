@@ -27,7 +27,18 @@ impl Save {
         return Save{    trainer: String::from("Null"),
                         money: 0,
                         id: 0,
-                        party: Vec::new(),
+                        party: vec![
+                            Pokemon::get(
+                                0x99, 
+                                1, 
+                                String::from("Bobsaur"), 
+                                vec![], 
+                                1, 
+                                String::from("Ash Ketchup"), 
+                                50, 
+                                [1,1,1,1,1], [1,1,1,1,1], [1,1,1,1,1]
+                            )
+                        ],
                         pc: Vec::new()
                     }
     } 
@@ -157,6 +168,27 @@ impl Save {
         // Range validation should be done in the UI.
         self.id = newID;
 
+    }
+
+    /// Party Pokemon Setter for Nickname
+    pub fn setPartyPokemonNick(&mut self, partyPokemon: usize, newNickname: String) -> Result<bool, String> {
+        
+        // First we check that there is a Pokemon in the party at the index
+        if partyPokemon > self.party.len() - 1 {
+            return Err(formatError(format!("There is no Pokemon in party slot {}", partyPokemon)));
+        }
+
+        // Then we update the nickname, and store the result for Error Handling
+        let nicknameChangeRes = self.party[partyPokemon].setNickname(newNickname);
+
+        // If the nickname change was unsuccessful, return the error
+        if nicknameChangeRes.is_err() {
+            return Err(nicknameChangeRes.unwrap_err());
+        } else {
+            return Ok(true);
+        }
+
+        
     }
 
     // ========   SAVE FILE RETRIEVAL    ======== 
@@ -499,6 +531,57 @@ mod tests {
         testSave.setID(newID);
 
         assert_eq!(testSave.getTrainerID(), &newID);
+    }
+
+    #[test]
+    fn setPartyPokemonNick_CorrectIndex() {
+        let mut testSave = Save::new();
+
+        let newNickname = String::from("Jimsaur");
+
+        let nicknameChangeResult = testSave.setPartyPokemonNick(0, newNickname);
+
+        assert!(nicknameChangeResult.is_ok());
+        assert_eq!(nicknameChangeResult.unwrap(), true);
+    }
+
+    #[test]
+    fn setPartyPokemonNick_IncorrectIndex() {
+        let mut testSave = Save::new();
+
+        let newNickname = String::from("Charmander");
+
+        // We'll try to edit a pokemon that doesn't exist
+        let nicknameChangeResult = testSave.setPartyPokemonNick(1, newNickname);
+
+        assert!(nicknameChangeResult.is_err());
+        assert_eq!(nicknameChangeResult.unwrap_err(), "\u{1b}[0;31mError\u{1b}[0m: There is no Pokemon in party slot 1");
+    }
+
+    #[test]
+    fn setPartyPokemonNick_CorrectLength() {
+        let mut testSave = Save::new();
+
+        // Length 11, boundary value
+        let newNickname = String::from("Jimbosaurus");
+
+        let nicknameChangeResult = testSave.setPartyPokemonNick(0, newNickname);
+
+        assert!(nicknameChangeResult.is_ok());
+        assert_eq!(nicknameChangeResult.unwrap(), true);
+    }
+
+    #[test]
+    fn setPartyPokemonNick_IncorrectLength() {
+        let mut testSave = Save::new();
+
+        // Length 15, too high
+        let newNickname = String::from("Jimbosaurus Rex");
+
+        let nicknameChangeResult = testSave.setPartyPokemonNick(0, newNickname);
+
+        assert!(nicknameChangeResult.is_err());
+        assert_eq!(nicknameChangeResult.unwrap_err(), "\u{1b}[0;31mError\u{1b}[0m: Length of nickname \"Jimbosaurus Rex\" is over 11 characters.");
     }
 
 }
