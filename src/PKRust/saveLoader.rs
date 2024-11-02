@@ -11,10 +11,12 @@ use super::utils::{textDecode, integrityCheck, formatError};
 pub struct Save {
     trainer: String,
     money: u32,
-    id: i32,
+    id: u16,
     party: Vec<Pokemon>,
-    // Each save file has 12 boxes, which hold 20 pokemon each
-    // Pokemon Box info here: https://bulbapedia.bulbagarden.net/wiki/Pok%C3%A9mon_Storage_System
+
+    /// Each save file has 12 boxes, which hold 20 pokemon each.
+    /// 
+    /// More Info [here](https://bulbapedia.bulbagarden.net/wiki/Pok%C3%A9mon_Storage_System)
     pc: Vec<Vec<Pokemon>>
 }
 
@@ -92,7 +94,7 @@ impl Save {
     }
 
     /// Getter for Trainer ID in Save
-    pub fn getTrainerID(&self) -> &i32 {
+    pub fn getTrainerID(&self) -> &u16 {
         return &self.id;
     }
 
@@ -143,6 +145,19 @@ impl Save {
 
     }
     
+    /// Setter for Trainer ID
+    /// 
+    /// **Note**: There is no validation in this function.
+    /// This is due to the fact that the typing (`u16`) provides the ranges for the value,
+    /// as [Pokemon Trainer ID's](https://bulbapedia.bulbagarden.net/wiki/Trainer_ID_number) in Gen 1
+    /// cannout be *under* 0 or *over* the 16-bit unsigned integer limit.
+    pub fn setID(&mut self, newID: u16) {
+        
+        // No checks can be done here because all is taken into account by the type.
+        // Range validation should be done in the UI.
+        self.id = newID;
+
+    }
 
     // ========   SAVE FILE RETRIEVAL    ======== 
 
@@ -167,9 +182,9 @@ impl Save {
     }
 
     /// Retrieves the trainer ID
-    fn getTrainerIDFromSave(save: &Vec<u8>) -> i32 {
+    fn getTrainerIDFromSave(save: &Vec<u8>) -> u16 {
         let stringID = format!("{:02X}{:02X}",save[ID_ADDR],save[ID_ADDR+1]);
-        return i32::from_str_radix(&stringID, 16).unwrap();
+        return u16::from_str_radix(&stringID, 16).unwrap();
     }
 
     /// Retrieves the players party of Pokemon
@@ -473,6 +488,17 @@ mod tests {
 
         assert!(moneyChangeResult.is_err());
         assert_eq!(moneyChangeResult.unwrap_err(), "\u{1b}[0;31mError\u{1b}[0m: Amount \"1000000\" is over allowed maximum 999,999.") 
+    }
+
+    #[test]
+    fn setID_Correct() {
+        let mut testSave = Save::new();
+
+        let newID:u16 = 12345;
+
+        testSave.setID(newID);
+
+        assert_eq!(testSave.getTrainerID(), &newID);
     }
 
 }
