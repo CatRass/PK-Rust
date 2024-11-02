@@ -8,7 +8,6 @@ use super::utils::{textDecode, integrityCheck, formatError};
 
 
 #[derive(Debug)]
-#[allow(dead_code)]
 pub struct Save {
     trainer: String,
     money: u32,
@@ -110,8 +109,19 @@ impl Save {
     // ========   SETTERS   ========
 
     /// Setter for Trainer Name in Save
-    pub fn setTrainerName(&self, name: String) -> Result<bool, String> {
-        todo!("Implement me");
+    pub fn setTrainerName(&mut self, name: String) -> Result<bool, String> {
+
+        // First let's check that the length is correct.
+        if name.len() > 11 {
+            return Err(formatError(format!("Name \"{}\" is over 11 characters.", name)));
+        }
+
+        // Now that the check is over, set the name
+        self.trainer = name;
+
+        // And return True
+        return Ok(true);
+
     }
 
     // ========   SAVE FILE RETRIEVAL    ======== 
@@ -388,7 +398,7 @@ mod tests {
     #[test]
     fn setTrainerName_Correct() {
         // This is the save we'll be testing with
-        let currSave = Save::new();
+        let mut currSave = Save::new();
 
         // This is the trainer name we'll be setting
         let newName = String::from("Brock");
@@ -400,6 +410,25 @@ mod tests {
         assert!(nameChangeResult.is_ok());
         // And we expect the unwrapped version of the name to be true
         assert_eq!(nameChangeResult.unwrap(), true);
+    }
+
+    #[test]
+    fn setTrainerName_Inorrect() {
+        // This is the save we'll be testing with
+        let mut currSave = Save::new();
+
+        // This is the trainer name we'll be setting.
+        // The maximum length for a name in gen 1 is 11 chars.
+        // Thus we will be testing with more than 11
+        let newName = String::from("Professor Oak");
+
+        // Now we change the name
+        let nameChangeResult = currSave.setTrainerName(newName);
+
+        // Once Gotten, we expect it to be Ok() and not Err()
+        assert!(nameChangeResult.is_err());
+        // And we expect the unwrapped version of the name to be true
+        assert_eq!(nameChangeResult.unwrap_err(), "\u{1b}[0;31mError\u{1b}[0m: Name \"Professor Oak\" is over 11 characters.");
     }
 
 }

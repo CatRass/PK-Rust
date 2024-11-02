@@ -16,7 +16,8 @@ fn main() {
     // The read_line collects line endings, so we need to remove them.
     let saveLoc = saveLocInput.trim();
 
-    let saveFile = match Save::load(saveLoc) {
+    // Save File must now be muttable to allow for setters
+    let mut saveFile = match Save::load(saveLoc) {
         // Get the correct Save if no errors
         Ok(correctSave) => correctSave,
         // Print the error message and exit the program
