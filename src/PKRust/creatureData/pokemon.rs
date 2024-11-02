@@ -138,7 +138,20 @@ impl Pokemon {
     
     /// Setter Pokemon Level
     pub fn setLevel(&mut self, newLevel:i8) -> Result<bool, String> {
-        todo!("Implement Me");
+        
+        // First we check that the level is not over 100
+        // Then we check if it is under 1
+        if newLevel > 100 {
+            return Err(formatError(format!("Value of new level \"{}\" is over allowed maximum 100", newLevel)));
+        } else if newLevel < 1 {
+            return Err(formatError(format!("Value of new level \"{}\" is under allowed minimum 1", newLevel)));
+        }
+
+        // Now that the checks are complete, we can set the new level
+        self.level = newLevel;
+
+        // And return an Ok()
+        return Ok(true);
     }
 
 }
@@ -147,9 +160,6 @@ impl Pokemon {
 
 #[cfg(test)]
 mod tests {
-
-    use std::vec;
-
     use super::*;
 
     #[test]
@@ -202,7 +212,7 @@ mod tests {
     }
 
     #[test]
-    fn setLevel_Incorrect() {
+    fn setLevel_IncorrectOver() {
         // Test Pokemon
         let mut testPokemon = Pokemon::new();
 
@@ -212,7 +222,21 @@ mod tests {
         let levelChangeResult = testPokemon.setLevel(newLevel);
 
         assert!(levelChangeResult.is_err());
-        assert_eq!(levelChangeResult.unwrap_err(), "\u{1b}[0;31mError\u{1b}[0m: Value of new level \"101\" is over 100");
+        assert_eq!(levelChangeResult.unwrap_err(), "\u{1b}[0;31mError\u{1b}[0m: Value of new level \"101\" is over allowed maximum 100");
+    }
+
+    #[test]
+    fn setLevel_IncorrectUnder() {
+        // Test Pokemon
+        let mut testPokemon = Pokemon::new();
+
+        // Max level can only be 100
+        let newLevel:i8 = 0;
+
+        let levelChangeResult = testPokemon.setLevel(newLevel);
+
+        assert!(levelChangeResult.is_err());
+        assert_eq!(levelChangeResult.unwrap_err(), "\u{1b}[0;31mError\u{1b}[0m: Value of new level \"0\" is under allowed minimum 1");
     }
 
 }
