@@ -1,7 +1,7 @@
 #![allow(non_snake_case)]
 
 pub mod PKRust;
-use std::io::{self, Write};
+use std::{io::{self, Write}, process};
 
 use PKRust::saveLoader::Save;
 
@@ -23,6 +23,13 @@ fn main() {
         saveLoc = saveLocInput.strip_suffix("\n").unwrap();
     }
 
-    let saveFile = Save::load(saveLoc).unwrap();
+    let saveFile = match Save::load(saveLoc) {
+        // Get the correct Save if no errors
+        Ok(correctSave) => correctSave,
+        // Print the error message and exit the program
+        // Exits with status 1 as it is a "general error"
+        Err(error) => {eprintln!("{}",error); process::exit(1);}
+
+    };
     saveFile.print();
 }
