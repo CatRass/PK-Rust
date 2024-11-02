@@ -27,18 +27,7 @@ impl Save {
         return Save{    trainer: String::from("Null"),
                         money: 0,
                         id: 0,
-                        party: vec![
-                            Pokemon::get(
-                                0x99, 
-                                1, 
-                                String::from("Bobsaur"), 
-                                vec![], 
-                                1, 
-                                String::from("Ash Ketchup"), 
-                                50, 
-                                [1,1,1,1,1], [1,1,1,1,1], [1,1,1,1,1]
-                            )
-                        ],
+                        party: vec![Pokemon::new()],
                         pc: Vec::new()
                     }
     } 

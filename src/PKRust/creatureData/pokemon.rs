@@ -32,6 +32,21 @@ impl Pokemon {
         return Pokemon{nickname, species, level, moves, ot, otn, hp, evs, ivs, stats};
     }
 
+    /// Function for making a blank Pokemon
+    pub fn new() -> Pokemon {
+        return Pokemon::get(
+            0x99,
+            10,
+            "Bobsaur".to_string(),
+            vec![Move::empty(), Move::empty(), Move::empty(), Move::empty()],
+            2, "Test Ketchum".to_string(),
+            100,
+            [0;5],
+            [0;5],
+            [0;5]
+        );
+    }
+
     // ========   GETTERS   ========
 
     /// Returns a string with all of the Pokemon's details, such as:
@@ -107,6 +122,7 @@ impl Pokemon {
 
     // ========   SETTERS   ========
 
+    /// Setter for Pokemon Nickname
     pub fn setNickname(&mut self, newNickname: String) -> Result<bool, String> {
 
         // First we check if the nickname is over 11 chars
@@ -120,6 +136,10 @@ impl Pokemon {
         return Ok(true);
     }
     
+    /// Setter Pokemon Level
+    pub fn setLevel(&mut self, newLevel:i8) -> Result<bool, String> {
+        todo!("Implement Me");
+    }
 
 }
 
@@ -127,7 +147,6 @@ impl Pokemon {
 
 #[cfg(test)]
 mod tests {
-    // use crate::pkmnLib::utils::textDecode;
 
     use std::vec;
 
@@ -136,35 +155,16 @@ mod tests {
     #[test]
     fn getDetails() {
         // Test Pokemon is a Bulbasaur at level 10
-        let testPkmn:Pokemon = Pokemon::get(
-            0x99,
-            10,
-            "Testy".to_string(),
-            vec![Move::empty(), Move::empty(), Move::empty(), Move::empty()],
-            2, "Test Ketchum".to_string(),
-            100,
-            [0;5],
-            [0;5],
-            [0;5]
-        );
+        let testPkmn:Pokemon = Pokemon::new();
 
         let stringPokemon:String = testPkmn.getDetails();
-        let actualString = "Bulbasaur    Testy        LVL:10 Current HP: 100\n\tNull PP: 0 PP Up: 0\n\tNull PP: 0 PP Up: 0\n\tNull PP: 0 PP Up: 0\n\tNull PP: 0 PP Up: 0\n\n\n\tHP: 0\n\tATK: 0\n\tDEF:0\n\tSPD: 0\n\tSPCL: 0\n\n\tHP EV: 0\n\tATK EV: 0\n\tDEF EV:0\n\tSPD EV: 0\n\tSPCL EV: 0\n\n\tATK IV: 0\n\tDEF IV:0\n\tSPD IV: 0\n\tSPCL IV: 0\n";
+        let actualString = "Bulbasaur    Bobsaur      LVL:10 Current HP: 100\n\tNull PP: 0 PP Up: 0\n\tNull PP: 0 PP Up: 0\n\tNull PP: 0 PP Up: 0\n\tNull PP: 0 PP Up: 0\n\n\n\tHP: 0\n\tATK: 0\n\tDEF:0\n\tSPD: 0\n\tSPCL: 0\n\n\tHP EV: 0\n\tATK EV: 0\n\tDEF EV:0\n\tSPD EV: 0\n\tSPCL EV: 0\n\n\tATK IV: 0\n\tDEF IV:0\n\tSPD IV: 0\n\tSPCL IV: 0\n";
         assert_eq!(stringPokemon, actualString);
     }
 
     #[test]
     fn setNickname_Correct() {
-        let mut testPokemon = Pokemon::get(
-            0x99, 
-            1, 
-            String::from("Bobsaur"), 
-            vec![], 
-            1, 
-            String::from("Ash Ketchup"), 
-            50, 
-            [1,1,1,1,1], [1,1,1,1,1], [1,1,1,1,1]
-        );
+        let mut testPokemon = Pokemon::new();
 
         let newNickname = String::from("Jimsaur");
 
@@ -177,16 +177,7 @@ mod tests {
 
     #[test]
     fn setNickname_Inorrect() {
-        let mut testPokemon = Pokemon::get(
-            0x99, 
-            1, 
-            String::from("Bobsaur"), 
-            vec![], 
-            1, 
-            String::from("Ash Ketchup"), 
-            50, 
-            [1,1,1,1,1], [1,1,1,1,1], [1,1,1,1,1]
-        );
+        let mut testPokemon = Pokemon::new();
 
         let newNickname = String::from("Jimbosaurus Rex");
 
@@ -195,6 +186,33 @@ mod tests {
         assert!(nicknameResult.is_err());
         assert_eq!(nicknameResult.unwrap_err(), "\u{1b}[0;31mError\u{1b}[0m: Length of nickname \"Jimbosaurus Rex\" is over 11 characters.");
 
+    }
+
+    #[test]
+    fn setLevel_Correct() {
+        // Test Pokemon
+        let mut testPokemon = Pokemon::new();
+
+        let newLevel:i8 = 100;
+
+        let levelChangeResult = testPokemon.setLevel(newLevel);
+
+        assert!(levelChangeResult.is_ok());
+        assert_eq!(levelChangeResult.unwrap(), true);
+    }
+
+    #[test]
+    fn setLevel_Incorrect() {
+        // Test Pokemon
+        let mut testPokemon = Pokemon::new();
+
+        // Max level can only be 100
+        let newLevel:i8 = 101;
+
+        let levelChangeResult = testPokemon.setLevel(newLevel);
+
+        assert!(levelChangeResult.is_err());
+        assert_eq!(levelChangeResult.unwrap_err(), "\u{1b}[0;31mError\u{1b}[0m: Value of new level \"101\" is over 100");
     }
 
 }
