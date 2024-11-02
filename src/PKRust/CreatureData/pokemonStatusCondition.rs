@@ -1,4 +1,0 @@
-#[derive(Debug)]
-enum StatusCondition {
-
-}

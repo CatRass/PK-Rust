@@ -19,6 +19,7 @@ pub struct Pokemon {
     stats:      Stats,
 }
 impl Pokemon {
+
     /// Constructor for a Pokemon, when being read from a save file
     pub fn get(index: i16, level:i8, nickname: String, moves: Vec<Move>, ot: u16, otn: String, hp: i16, evArr: [u16;5], ivArr: [u16;5], statArr: [u16;5]) -> Pokemon {
         let species = Species::parse(index).unwrap();
@@ -29,6 +30,8 @@ impl Pokemon {
         
         return Pokemon{nickname, species, level, moves, ot, otn, hp, evs, ivs, stats};
     }
+
+    // ========   GETTERS   ========
 
     /// Returns a string with all of the Pokemon's details, such as:
     /// 
@@ -101,6 +104,13 @@ impl Pokemon {
         return &self.stats;
     }
 
+    // ========   SETTERS   ========
+
+    pub fn setNickname(&mut self, newNickname: String) -> Result<bool, String> {
+        todo!("Implement me");
+    }
+    
+
 }
 
 
@@ -108,6 +118,8 @@ impl Pokemon {
 #[cfg(test)]
 mod tests {
     // use crate::pkmnLib::utils::textDecode;
+
+    use std::vec;
 
     use super::*;
 
@@ -130,4 +142,49 @@ mod tests {
         let actualString = "Bulbasaur    Testy        LVL:10 Current HP: 100\n\tNull PP: 0 PP Up: 0\n\tNull PP: 0 PP Up: 0\n\tNull PP: 0 PP Up: 0\n\tNull PP: 0 PP Up: 0\n\n\n\tHP: 0\n\tATK: 0\n\tDEF:0\n\tSPD: 0\n\tSPCL: 0\n\n\tHP EV: 0\n\tATK EV: 0\n\tDEF EV:0\n\tSPD EV: 0\n\tSPCL EV: 0\n\n\tATK IV: 0\n\tDEF IV:0\n\tSPD IV: 0\n\tSPCL IV: 0\n";
         assert_eq!(stringPokemon, actualString);
     }
+
+    #[test]
+    fn setNickname_Correct() {
+        let mut testPokemon = Pokemon::get(
+            0x99, 
+            1, 
+            String::from("Bobsaur"), 
+            vec![], 
+            1, 
+            String::from("Ash Ketchup"), 
+            50, 
+            [1,1,1,1,1], [1,1,1,1,1], [1,1,1,1,1]
+        );
+
+        let newNickname = String::from("Jimsaur");
+
+        let nicknameResult = testPokemon.setNickname(newNickname);
+
+        assert!(nicknameResult.is_ok());
+        assert_eq!(nicknameResult.unwrap(), true);
+
+    }
+
+    #[test]
+    fn setNickname_Inorrect() {
+        let mut testPokemon = Pokemon::get(
+            0x99, 
+            1, 
+            String::from("Bobsaur"), 
+            vec![], 
+            1, 
+            String::from("Ash Ketchup"), 
+            50, 
+            [1,1,1,1,1], [1,1,1,1,1], [1,1,1,1,1]
+        );
+
+        let newNickname = String::from("Jimbosaurus Rex");
+
+        let nicknameResult = testPokemon.setNickname(newNickname);
+
+        assert!(nicknameResult.is_err());
+        assert_eq!(nicknameResult.unwrap_err(), "\u{1b}[0;31mError\u{1b}[0m: Length of nickname \"Jimbosaurus Rex\" is over 11 characters.");
+
+    }
+
 }
