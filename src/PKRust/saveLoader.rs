@@ -4,7 +4,7 @@ use std::path::PathBuf;
 use super::creatureData::pokemonMove::Move;
 use super::creatureData::pokemon::*;
 use super::addresses::*;
-use super::utils::{textDecode, integrityCheck};
+use super::utils::{textDecode, integrityCheck, formatError};
 
 
 #[derive(Debug)]
@@ -35,21 +35,21 @@ impl Save {
 
         let filePathBuf:PathBuf = std::path::PathBuf::from(file);
 
-        println!("{:?}", filePathBuf);
+        // println!("{:?}", filePathBuf);
 
         // First we load the save file and check for if it exists
         // If not, an error result will be returned
         let save = match fs::read(filePathBuf) {
             Ok(result)                => result,
             Err(error)                  => match error.kind() {
-                std::io::ErrorKind::NotFound   => return Err(format!("Save: {} does not exist",file)),
+                std::io::ErrorKind::NotFound   => return Err(formatError(format!("Save \"{}\" does not exist",file))),
                 _                              => return Err(format!("Unexpected Error: {}",error.kind()))
             }
         };
 
         // Then we check if the file has integrity (Check if it's valid)
         if integrityCheck(&save) == false {
-            return Err(String::from("Error: File does not seem to be a Gen 1 Save File"));
+            return Err(formatError(String::from("File does not seem to be a Gen 1 Save File")));
         }
 
         let pc = Self::getPCBoxesFromSave(&save);
@@ -354,7 +354,7 @@ mod tests {
         let saveFile = Save::load(fileName);
 
         assert!(saveFile.is_err());
-        assert_eq!(saveFile.unwrap_err(), "Error: File does not seem to be a Gen 1 Save File");
+        assert_eq!(saveFile.unwrap_err(), "\u{1b}[0;31mError\u{1b}[0m: File does not seem to be a Gen 1 Save File");
         
     }
 
@@ -372,7 +372,7 @@ mod tests {
         let saveFile = Save::load(fileName);
 
         assert!(saveFile.is_err());
-        assert_eq!(saveFile.unwrap_err(), format!("Save: {} does not exist",fileName));
+        assert_eq!(saveFile.unwrap_err(), format!("\u{1b}[0;31mError\u{1b}[0m: Save \"{}\" does not exist",fileName));
         
     }
 

@@ -180,6 +180,15 @@ pub fn integrityCheck(saveFile: &Vec<u8>) -> bool {
     
 }
 
+/// A function for formatting error messages.
+/// 
+/// Saves me from doing ANSI code tomfoolery every time I want to use an error
+pub fn formatError(msg: String) -> String {
+    // Should ring the terminal bell
+    print!("\x07");
+    return format!("\x1B[0;31mError\x1b[0m: {}", msg);
+}
+
 // ================ TESTS ================ 
 #[cfg(test)]
 mod tests {
