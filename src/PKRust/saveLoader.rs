@@ -124,6 +124,26 @@ impl Save {
 
     }
 
+    /// Setter for Money amount in Save
+    pub fn setMoney(&mut self, amount: u32) -> Result<bool, String> {
+
+        // First let's check that the amount is correct
+        // Cannot be more than 999,999
+        if amount > 999_999 {
+            return Err(formatError(format!("Amount \"{}\" is over allowed maximum 999,999.", amount)));
+        }
+
+        // We do not need to check for minimum as it is unsigned.
+
+        // Now that the check is over, set the name
+        self.money = amount;
+
+        // And return True
+        return Ok(true);
+
+    }
+    
+
     // ========   SAVE FILE RETRIEVAL    ======== 
 
     /// Retrieves the name from the save file
@@ -429,6 +449,30 @@ mod tests {
         assert!(nameChangeResult.is_err());
         // And we expect the unwrapped version of the name to be true
         assert_eq!(nameChangeResult.unwrap_err(), "\u{1b}[0;31mError\u{1b}[0m: Name \"Professor Oak\" is over 11 characters.");
+    }
+
+    #[test]
+    fn setMoney_Correct() {
+        let mut testSave = Save::new();
+
+        let newMoneyAmount:u32 = 1000;
+
+        let moneyChangeResult = testSave.setMoney(newMoneyAmount);
+
+        assert!(moneyChangeResult.is_ok());
+        assert_eq!(moneyChangeResult.unwrap(), true);
+    }
+
+    #[test]
+    fn setMoney_Incorrect() {
+        let mut testSave = Save::new();
+
+        let newMoneyAmount:u32 = 1_000_000;
+
+        let moneyChangeResult = testSave.setMoney(newMoneyAmount);
+
+        assert!(moneyChangeResult.is_err());
+        assert_eq!(moneyChangeResult.unwrap_err(), "\u{1b}[0;31mError\u{1b}[0m: Amount \"1000000\" is over allowed maximum 999,999.") 
     }
 
 }
