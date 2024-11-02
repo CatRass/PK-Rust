@@ -1,6 +1,7 @@
 use super::pokemonMove::Move;
 use super::pokemonSpecies::Species;
 use super::pokemonStats::{Stats, IVs, EVs};
+use super::super::utils::formatError;
 
 
 #[derive(Debug)]
@@ -107,7 +108,16 @@ impl Pokemon {
     // ========   SETTERS   ========
 
     pub fn setNickname(&mut self, newNickname: String) -> Result<bool, String> {
-        todo!("Implement me");
+
+        // First we check if the nickname is over 11 chars
+        if newNickname.len() > 11 {
+            return Err(formatError(format!("Length of nickname \"{}\" is over 11 characters.", newNickname)));
+        }
+
+        // Now that the check is complete, we change the nickname
+        self.nickname = newNickname;
+
+        return Ok(true);
     }
     
 
