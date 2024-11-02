@@ -80,6 +80,8 @@ impl Save {
         println!("=================\n");
     }
 
+    // ========   GETTERS   ========
+
     /// Getter for Trainer Name in Save
     pub fn getTrainerName(&self) -> &String {
         return &self.trainer;
@@ -103,6 +105,13 @@ impl Save {
     /// Getter for PC Boxes
     pub fn getPCBoxes(&self) -> &Vec<Vec<Pokemon>> {
         return &self.pc;
+    }
+
+    // ========   SETTERS   ========
+
+    /// Setter for Trainer Name in Save
+    pub fn setTrainerName(&self, name: String) -> Result<bool, String> {
+        todo!("Implement me");
     }
 
     // ========   SAVE FILE RETRIEVAL    ======== 
@@ -374,6 +383,23 @@ mod tests {
         assert!(saveFile.is_err());
         assert_eq!(saveFile.unwrap_err(), format!("\u{1b}[0;31mError\u{1b}[0m: Save \"{}\" does not exist",fileName));
         
+    }
+
+    #[test]
+    fn setTrainerName_Correct() {
+        // This is the save we'll be testing with
+        let currSave = Save::new();
+
+        // This is the trainer name we'll be setting
+        let newName = String::from("Brock");
+
+        // Now we change the name
+        let nameChangeResult = currSave.setTrainerName(newName);
+
+        // Once Gotten, we expect it to be Ok() and not Err()
+        assert!(nameChangeResult.is_ok());
+        // And we expect the unwrapped version of the name to be true
+        assert_eq!(nameChangeResult.unwrap(), true);
     }
 
 }
