@@ -1,4 +1,8 @@
 #![allow(non_snake_case)]
+// This is for the mutable saveFile, since it has to 
+// be mutable for all the editing functions, just they
+// aren't implemneted into the main "program" yet.
+#![allow(unused_mut)]
 
 pub mod PKRust;
 use std::{io::{self, Write}, process};

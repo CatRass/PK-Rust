@@ -183,7 +183,7 @@ impl Save {
 
     /// Party Pokemon Setter for Level
     /// 
-    /// this is an abstraction for pokemon::Pokemon::setLevel
+    /// This is an abstraction for pokemon::Pokemon::setLevel
     pub fn setPartyPokemonLevel(&mut self, partyPokemon: usize, newLevel: i8) -> Result<bool, String> {
         
         // First we check that the party index is existing
@@ -199,6 +199,18 @@ impl Save {
         } else {
             return Ok(true);
         }
+    }
+
+    /// Party Pokemon Setter for OTID
+    /// 
+    /// This is an abstraction for pokemon::Pokemon::setOTID
+    /// 
+    /// **Note**: There is no range validation for the OTID in this function.
+    /// This is due to the fact that the typing (`u16`) provides the ranges for the value,
+    /// as [Pokemon Trainer ID's](https://bulbapedia.bulbagarden.net/wiki/Trainer_ID_number) in Gen 1
+    /// cannout be *under* 0 or *over* the 16-bit unsigned integer limit.
+    pub fn setPartyPokemonOTID(&mut self, partyPokemon: usize, newOTID: u16) -> Result<bool, String> {
+        todo!("Implement me")
     }
 
     // ========   SAVE FILE RETRIEVAL    ======== 
@@ -442,6 +454,8 @@ impl Save {
 
 #[cfg(test)]
 mod tests {
+    use std::u16;
+
     use super::*;
 
     #[test]
@@ -640,6 +654,30 @@ mod tests {
 
         assert!(levelChangeResult.is_err());
         assert_eq!(levelChangeResult.unwrap_err(), "\u{1b}[0;31mError\u{1b}[0m: Value of new level \"101\" is over allowed maximum 100"); 
+    }
+
+    #[test]
+    fn setPartyPokemonOTID_Correct() {
+        let mut testSave = Save::new();
+
+        let newOTID = u16::MAX;
+
+        let changeOTIDResult = testSave.setPartyPokemonOTID(0, newOTID);
+
+        assert!(changeOTIDResult.is_ok());
+        assert_eq!(changeOTIDResult.unwrap(), true);
+    }
+
+    #[test]
+    fn setPartyPokemonOTID_IncorrectIndex() {
+        let mut testSave = Save::new();
+
+        let newOTID = u16::MAX;
+
+        let changeOTIDResult = testSave.setPartyPokemonOTID(1, newOTID);
+
+        assert!(changeOTIDResult.is_err());
+        assert_eq!(changeOTIDResult.unwrap_err(), "\u{1b}[0;31mError\u{1b}[0m: There is no Pokemon in party slot 1");
     }
 
 }
