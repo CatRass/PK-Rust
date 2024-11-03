@@ -161,7 +161,7 @@ impl Pokemon {
     /// 
     /// Any range validation needs to be done on user input.
     pub fn setOTID(&mut self, newOTID:u16) {
-        todo!("Implement Me")
+        self.ot = newOTID;
     }
 
 }
