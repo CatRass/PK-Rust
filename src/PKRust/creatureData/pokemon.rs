@@ -96,7 +96,7 @@ impl Pokemon {
         return &self.moves;
     }
 
-    pub fn getOT(&self) -> &u16 {
+    pub fn getOTID(&self) -> &u16 {
         return &self.ot;
     }
 
@@ -154,12 +154,24 @@ impl Pokemon {
         return Ok(true);
     }
 
+    /// Setter for Pokemon OT ID
+    /// 
+    /// No validation is required in the function as the
+    /// typing restrictions handle the minimum and maximum values.
+    /// 
+    /// Any range validation needs to be done on user input.
+    pub fn setOTID(&mut self, newOTID:u16) {
+        todo!("Implement Me")
+    }
+
 }
 
 
 
 #[cfg(test)]
 mod tests {
+    use std::u16;
+
     use super::*;
 
     #[test]
@@ -237,6 +249,19 @@ mod tests {
 
         assert!(levelChangeResult.is_err());
         assert_eq!(levelChangeResult.unwrap_err(), "\u{1b}[0;31mError\u{1b}[0m: Value of new level \"0\" is under allowed minimum 1");
+    }
+
+    #[test]
+    fn setOTID_Correct() {
+
+        let mut testPokemon = Pokemon::new();
+
+        let newOTID = u16::MAX;
+
+        testPokemon.setOTID(newOTID);
+
+        assert_eq!(testPokemon.getOTID(), &newOTID);
+
     }
 
 }
