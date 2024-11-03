@@ -210,7 +210,17 @@ impl Save {
     /// as [Pokemon Trainer ID's](https://bulbapedia.bulbagarden.net/wiki/Trainer_ID_number) in Gen 1
     /// cannout be *under* 0 or *over* the 16-bit unsigned integer limit.
     pub fn setPartyPokemonOTID(&mut self, partyPokemon: usize, newOTID: u16) -> Result<bool, String> {
-        todo!("Implement me")
+
+         // First we check that the party index is existing
+         if partyPokemon > self.party.len() - 1 {
+            return Err(formatError(format!("There is no Pokemon in party slot {}", partyPokemon)));
+        }
+
+        // Then we edit the OT ID
+        self.party[partyPokemon].setOTID(newOTID);
+
+        // And finally we return a successful result
+        return Ok(true);
     }
 
     // ========   SAVE FILE RETRIEVAL    ======== 
