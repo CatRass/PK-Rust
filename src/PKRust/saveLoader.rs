@@ -185,7 +185,20 @@ impl Save {
     /// 
     /// this is an abstraction for pokemon::Pokemon::setLevel
     pub fn setPartyPokemonLevel(&mut self, partyPokemon: usize, newLevel: i8) -> Result<bool, String> {
-        todo!("Implement me")
+        
+        // First we check that the party index is existing
+        if partyPokemon > self.party.len() - 1 {
+            return Err(formatError(format!("There is no Pokemon in party slot {}", partyPokemon)));
+        }
+
+        // Then we update the pokemons level and store the result
+        let levelChangeResult = self.party[partyPokemon].setLevel(newLevel);
+    
+        if levelChangeResult.is_err() {
+            return Err(levelChangeResult.unwrap_err());
+        } else {
+            return Ok(true);
+        }
     }
 
     // ========   SAVE FILE RETRIEVAL    ======== 
