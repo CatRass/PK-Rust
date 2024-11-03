@@ -159,7 +159,9 @@ impl Save {
 
     }
 
-    /// Party Pokemon Setter for Nickname
+    /// Party Pokemon Setter for Nickname.
+    /// 
+    /// This is an abstraction for pokemon::Pokemon::setNickname
     pub fn setPartyPokemonNick(&mut self, partyPokemon: usize, newNickname: String) -> Result<bool, String> {
         
         // First we check that there is a Pokemon in the party at the index
@@ -176,8 +178,14 @@ impl Save {
         } else {
             return Ok(true);
         }
-
         
+    }
+
+    /// Party Pokemon Setter for Level
+    /// 
+    /// this is an abstraction for pokemon::Pokemon::setLevel
+    pub fn setPartyPokemonLevel(&mut self, partyPokemon: usize, newLevel: i8) -> Result<bool, String> {
+        todo!("Implement me")
     }
 
     // ========   SAVE FILE RETRIEVAL    ======== 
@@ -571,6 +579,54 @@ mod tests {
 
         assert!(nicknameChangeResult.is_err());
         assert_eq!(nicknameChangeResult.unwrap_err(), "\u{1b}[0;31mError\u{1b}[0m: Length of nickname \"Jimbosaurus Rex\" is over 11 characters.");
+    }
+
+    #[test]
+    fn setPartyPokemonLevel_Correct() {
+        let mut testSave = Save::new();
+
+        let newLevel:i8 = 100;
+
+        let levelChangeResult = testSave.setPartyPokemonLevel(0, newLevel);
+
+        assert!(levelChangeResult.is_ok());
+        assert_eq!(levelChangeResult.unwrap(), true); 
+    }
+
+    #[test]
+    fn setPartyPokemonLevel_InorrectIndex() {
+        let mut testSave = Save::new();
+
+        let newLevel:i8 = 100;
+
+        let levelChangeResult = testSave.setPartyPokemonLevel(1, newLevel);
+
+        assert!(levelChangeResult.is_err());
+        assert_eq!(levelChangeResult.unwrap_err(), "\u{1b}[0;31mError\u{1b}[0m: There is no Pokemon in party slot 1"); 
+    }
+
+    #[test]
+    fn setPartyPokemonLevel_IncorrectUnder() {
+        let mut testSave = Save::new();
+
+        let newLevel:i8 = 0;
+
+        let levelChangeResult = testSave.setPartyPokemonLevel(0, newLevel);
+
+        assert!(levelChangeResult.is_err());
+        assert_eq!(levelChangeResult.unwrap_err(), "\u{1b}[0;31mError\u{1b}[0m: Value of new level \"0\" is under allowed minimum 1"); 
+    }
+
+    #[test]
+    fn setPartyPokemonLevel_IncorrectOver() {
+        let mut testSave = Save::new();
+
+        let newLevel:i8 = 101;
+
+        let levelChangeResult = testSave.setPartyPokemonLevel(0, newLevel);
+
+        assert!(levelChangeResult.is_err());
+        assert_eq!(levelChangeResult.unwrap_err(), "\u{1b}[0;31mError\u{1b}[0m: Value of new level \"101\" is over allowed maximum 100"); 
     }
 
 }
