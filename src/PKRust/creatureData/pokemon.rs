@@ -126,8 +126,8 @@ impl Pokemon {
     pub fn setNickname(&mut self, newNickname: String) -> Result<bool, String> {
 
         // First we check if the nickname is over 11 chars
-        if newNickname.len() > 11 {
-            return Err(formatError(format!("Length of nickname \"{}\" is over 11 characters.", newNickname)));
+        if newNickname.len() > 10 {
+            return Err(formatError(format!("Length of nickname \"{}\" is over 10 characters.", newNickname)));
         }
 
         // Now that the check is complete, we change the nickname
@@ -166,7 +166,17 @@ impl Pokemon {
 
 
     pub fn setOTN(&mut self, newOTN:String) -> Result<bool, String>{
-        todo!("Implement Me")
+        
+        // First we check that the length is correct
+        if newOTN.len() > 10 {
+            return Err(formatError(format!("OTN \"{}\" is over 7 characters.", newOTN)));
+        }
+
+        // Now that we've checked the length, we set the name
+        self.otn = newOTN;
+
+        // and return an Ok
+        return Ok(true);
     }
 }
 
@@ -210,7 +220,7 @@ mod tests {
         let nicknameResult = testPokemon.setNickname(newNickname);
 
         assert!(nicknameResult.is_err());
-        assert_eq!(nicknameResult.unwrap_err(), "\u{1b}[0;31mError\u{1b}[0m: Length of nickname \"Jimbosaurus Rex\" is over 11 characters.");
+        assert_eq!(nicknameResult.unwrap_err(), "\u{1b}[0;31mError\u{1b}[0m: Length of nickname \"Jimbosaurus Rex\" is over 10 characters.");
 
     }
 

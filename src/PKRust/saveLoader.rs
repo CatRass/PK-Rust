@@ -596,8 +596,8 @@ mod tests {
     fn setPartyPokemonNick_CorrectLength() {
         let mut testSave = Save::new();
 
-        // Length 11, boundary value
-        let newNickname = String::from("Jimbosaurus");
+        // Length 10, boundary value
+        let newNickname = String::from("Jimbosarus");
 
         let nicknameChangeResult = testSave.setPartyPokemonNick(0, newNickname);
 
@@ -615,7 +615,7 @@ mod tests {
         let nicknameChangeResult = testSave.setPartyPokemonNick(0, newNickname);
 
         assert!(nicknameChangeResult.is_err());
-        assert_eq!(nicknameChangeResult.unwrap_err(), "\u{1b}[0;31mError\u{1b}[0m: Length of nickname \"Jimbosaurus Rex\" is over 11 characters.");
+        assert_eq!(nicknameChangeResult.unwrap_err(), "\u{1b}[0;31mError\u{1b}[0m: Length of nickname \"Jimbosaurus Rex\" is over 10 characters.");
     }
 
     #[test]
