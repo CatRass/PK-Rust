@@ -228,7 +228,23 @@ impl Save {
     /// 
     /// This is an abstraction for pokemon::Pokemon::setOTN
     pub fn setPartyPokemonOTN(&mut self, partyPokemon: usize, newOTN: String) -> Result<bool, String> {
-        todo!("Implement Me")
+        
+        // First we check that the party index is existing
+        if partyPokemon > self.party.len() - 1 {
+            return Err(formatError(format!("There is no Pokemon in party slot {}", partyPokemon)));
+        }
+
+        // Then we edit the OTN, and store the result
+        let changeOTNResult = self.party[partyPokemon].setOTN(newOTN);
+
+        // If we get an error, we return it
+        // Else, return a success
+        if changeOTNResult.is_err() {
+            return Err(changeOTNResult.unwrap_err());
+        } else {
+            return Ok(true);
+        }
+
     }
 
     // ========   SAVE FILE RETRIEVAL    ======== 
