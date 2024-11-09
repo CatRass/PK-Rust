@@ -114,8 +114,8 @@ impl Save {
     pub fn setTrainerName(&mut self, name: String) -> Result<bool, String> {
 
         // First let's check that the length is correct.
-        if name.len() > 11 {
-            return Err(formatError(format!("Name \"{}\" is over 11 characters.", name)));
+        if name.len() > 7 {
+            return Err(formatError(format!("Name \"{}\" is over 7 characters.", name)));
         }
 
         // Now that the check is over, set the name
@@ -529,7 +529,7 @@ mod tests {
         // Once Gotten, we expect it to be Ok() and not Err()
         assert!(nameChangeResult.is_err());
         // And we expect the unwrapped version of the name to be true
-        assert_eq!(nameChangeResult.unwrap_err(), "\u{1b}[0;31mError\u{1b}[0m: Name \"Professor Oak\" is over 11 characters.");
+        assert_eq!(nameChangeResult.unwrap_err(), "\u{1b}[0;31mError\u{1b}[0m: Name \"Professor Oak\" is over 7 characters.");
     }
 
     #[test]
