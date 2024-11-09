@@ -164,6 +164,10 @@ impl Pokemon {
         self.ot = newOTID;
     }
 
+
+    pub fn setOTN(&mut self, newOTN:String) -> Result<bool, String>{
+        todo!("Implement Me")
+    }
 }
 
 
@@ -198,7 +202,7 @@ mod tests {
     }
 
     #[test]
-    fn setNickname_Inorrect() {
+    fn setNickname_Incorrect() {
         let mut testPokemon = Pokemon::new();
 
         let newNickname = String::from("Jimbosaurus Rex");
@@ -262,6 +266,30 @@ mod tests {
 
         assert_eq!(testPokemon.getOTID(), &newOTID);
 
+    }
+
+    #[test]
+    fn setOTN_Correct() {
+        let mut testPkmn: Pokemon = Pokemon::new();
+        let newOTN: String = String::from("Brock");
+
+        let changeOTNResult = testPkmn.setOTN(newOTN);
+
+        assert!(changeOTNResult.is_ok());
+        assert_eq!(changeOTNResult.unwrap(), true);
+    }
+
+    #[test]
+    fn setOTN_Incorrect() {
+        let mut testPkmn: Pokemon = Pokemon::new();
+
+        // 13 Char OTN, can only be 7
+        let newOTN: String = String::from("Professor Oak");
+        
+        let changeOTNResult = testPkmn.setOTN(newOTN);
+
+        assert!(changeOTNResult.is_err());
+        assert_eq!(changeOTNResult.unwrap_err(),"\u{1b}[0;31mError\u{1b}[0m: OTN \"Professor Oak\" is over 7 characters.");
     }
 
 }

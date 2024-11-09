@@ -514,13 +514,13 @@ mod tests {
     }
 
     #[test]
-    fn setTrainerName_Inorrect() {
+    fn setTrainerName_Incorrect() {
         // This is the save we'll be testing with
         let mut currSave = Save::new();
 
         // This is the trainer name we'll be setting.
-        // The maximum length for a name in gen 1 is 11 chars.
-        // Thus we will be testing with more than 11
+        // The maximum length for a name in gen 1 is 7 chars.
+        // Thus we will be testing with more than 7
         let newName = String::from("Professor Oak");
 
         // Now we change the name
