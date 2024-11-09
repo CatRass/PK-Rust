@@ -165,6 +165,7 @@ impl Pokemon {
     }
 
 
+    /// Setter for Pokemon OT Nickname
     pub fn setOTN(&mut self, newOTN:String) -> Result<bool, String>{
         
         // First we check that the length is correct

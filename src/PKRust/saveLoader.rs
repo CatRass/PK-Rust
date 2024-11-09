@@ -223,6 +223,14 @@ impl Save {
         return Ok(true);
     }
 
+
+    /// Party Pokemon Setter for OT Nickname
+    /// 
+    /// This is an abstraction for pokemon::Pokemon::setOTN
+    pub fn setPartyPokemonOTN(&mut self, partyPokemon: usize, newOTN: String) -> Result<bool, String> {
+        todo!("Implement Me")
+    }
+
     // ========   SAVE FILE RETRIEVAL    ======== 
 
     /// Retrieves the name from the save file
@@ -688,6 +696,54 @@ mod tests {
 
         assert!(changeOTIDResult.is_err());
         assert_eq!(changeOTIDResult.unwrap_err(), "\u{1b}[0;31mError\u{1b}[0m: There is no Pokemon in party slot 1");
+    }
+
+    #[test]
+    fn setPartyPokemonOTN_CorrectIndex() {
+        let mut testSave = Save::new();
+
+        let newOTN = String::from("Brock");
+
+        let nicknameChangeResult = testSave.setPartyPokemonOTN(0, newOTN);
+
+        assert!(nicknameChangeResult.is_ok());
+        assert_eq!(nicknameChangeResult.unwrap(), true);
+    }
+
+    #[test]
+    fn setPartyPokemonOTN_IncorrectIndex() {
+        let mut testSave = Save::new();
+
+        let newOTN = String::from("Brock");
+
+        let nicknameChangeResult = testSave.setPartyPokemonOTN(1, newOTN);
+
+        assert!(nicknameChangeResult.is_err());
+        assert_eq!(nicknameChangeResult.unwrap_err(), "\u{1b}[0;31mError\u{1b}[0m: There is no Pokemon in party slot 1");
+    }
+
+    #[test]
+    fn setPartyPokemonOTN_CorrectLength() {
+        let mut testSave = Save::new();
+
+        let newOTN = String::from("Brock");
+
+        let nicknameChangeResult = testSave.setPartyPokemonOTN(0, newOTN);
+
+        assert!(nicknameChangeResult.is_ok());
+        assert_eq!(nicknameChangeResult.unwrap(), true);
+    }
+
+    #[test]
+    fn setPartyPokemonOTN_IncorrectLength() {
+        let mut testSave = Save::new();
+
+        let newOTN = String::from("Professor Oak");
+
+        let nicknameChangeResult = testSave.setPartyPokemonOTN(0, newOTN);
+
+        assert!(nicknameChangeResult.is_err());
+        assert_eq!(nicknameChangeResult.unwrap_err(), "\u{1b}[0;31mError\u{1b}[0m: OTN \"Professor Oak\" is over 7 characters.");
     }
 
 }
