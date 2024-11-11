@@ -1,5 +1,3 @@
-use std::fmt::format;
-
 use super::super::utils::formatError;
 
 
@@ -402,40 +400,40 @@ impl EVs {
     /// 
     /// The limit for an EV is 65_535, so input validation
     /// is done outside this function.
-    pub fn setHP(&self, newHP: u16) {
-        todo!("Implement Me")
+    pub fn setHP(&mut self, newHP: u16) {
+        self.hp = newHP;
     }
 
     /// Setter for Attack EV
     /// 
     /// The limit for an EV is 65_535, so input validation
     /// is done outside this function.
-    pub fn setATK(&self, newATK: u16) {
-        todo!("Implement Me")
+    pub fn setATK(&mut self, newATK: u16) {
+        self.atk = newATK;
     }
 
     /// Setter for Defence EV
     /// 
     /// The limit for an EV is 65_535, so input validation
     /// is done outside this function.
-    pub fn setDEF(&self, newDEF: u16) {
-        todo!("Implement Me")
+    pub fn setDEF(&mut self, newDEF: u16) {
+        self.def = newDEF;
     }
 
     /// Setter for Speed EV
     /// 
     /// The limit for an EV is 65_535, so input validation
     /// is done outside this function.
-    pub fn setSPD(&self, newSPD: u16) {
-        todo!("Implement Me")
+    pub fn setSPD(&mut self, newSPD: u16) {
+        self.spd = newSPD;
     }
 
     /// Setter for Special EV
     /// 
     /// The limit for an EV is 65_535, so input validation
     /// is done outside this function.
-    pub fn setSPC(&self, newSPC: u16) {
-        todo!("Implement Me")
+    pub fn setSPC(&mut self, newSPC: u16) {
+        self.spc = newSPC;
     }
 
 }
