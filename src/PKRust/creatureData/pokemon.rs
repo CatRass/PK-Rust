@@ -25,8 +25,8 @@ impl Pokemon {
     pub fn get(index: i16, level:i8, nickname: String, moves: Vec<Move>, ot: u16, otn: String, hp: i16, evArr: [u16;5], ivArr: [u16;5], statArr: [u16;5]) -> Pokemon {
         let species = Species::parse(index).unwrap();
 
-        let evs = EVs{hp: evArr[0], atk: evArr[1], def: evArr[2], spd: evArr[3], spc: evArr[4]};
-        let ivs = IVs{atk: ivArr[0], def: ivArr[1], spd: ivArr[2], spc: ivArr[3], hp: ivArr[4]};
+        let evs = EVs::setAll(evArr);
+        let ivs = IVs::setAll(ivArr);
         let stats = Stats{hp: statArr[0], atk: statArr[1], def: statArr[2], spd: statArr[3], spc: statArr[4]};
         
         return Pokemon{nickname, species, level, moves, ot, otn, hp, evs, ivs, stats};
