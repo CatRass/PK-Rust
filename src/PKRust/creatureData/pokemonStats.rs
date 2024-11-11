@@ -1,3 +1,7 @@
+use std::fmt::format;
+
+use super::super::utils::formatError;
+
 
 #[derive(Debug)]
 pub struct Stats {
@@ -96,36 +100,86 @@ impl IVs {
     /// Setter for HP IV
     /// 
     /// IV's can only be values 0-15
-    pub fn setHP(&self, newHP: u16) -> Result<bool, String> {
-        todo!("Implement Me")
+    pub fn setHP(&mut self, newHP: u16) -> Result<bool, String> {
+        
+        // First we check if the value is over 15
+        if newHP > 15 {
+            return Err(formatError(format!("HP IV value is \"{}\", which is over max value 15", newHP)));
+        }
+
+        // If it's not, we set the new HP
+        self.hp = newHP;
+
+        // And return an Ok
+        return Ok(true);
+
     }
 
     /// Setter for Attack IV
     /// 
     /// IV's can only be values 0-15
-    pub fn setATK(&self, newATK: u16) -> Result<bool, String> {
-        todo!("Implement Me")
+    pub fn setATK(&mut self, newATK: u16) -> Result<bool, String> {
+        
+        // First we check if the value is over 15
+        if newATK > 15 {
+            return Err(formatError(format!("ATK IV value is \"{}\", which is over max value 15", newATK)));
+        }
+
+        // If it's not, we set the new HP
+        self.atk = newATK;
+
+        // And return an Ok
+        return Ok(true);
     }
 
     /// Setter for Defence IV
     /// 
     /// IV's can only be values 0-15
-    pub fn setDEF(&self, newDEF: u16) -> Result<bool, String> {
-        todo!("Implement Me")
+    pub fn setDEF(&mut self, newDEF: u16) -> Result<bool, String> {
+         
+        // First we check if the value is over 15
+        if newDEF > 15 {
+            return Err(formatError(format!("DEF IV value is \"{}\", which is over max value 15", newDEF)));
+        }
+
+        // If it's not, we set the new HP
+        self.def = newDEF;
+
+        // And return an Ok
+        return Ok(true);
     }
 
     /// Setter for Speed IV
     /// 
     /// IV's can only be values 0-15
-    pub fn setSPD(&self, newSPD: u16) -> Result<bool, String> {
-        todo!("Implement Me")
+    pub fn setSPD(&mut self, newSPD: u16) -> Result<bool, String> {
+                 
+        // First we check if the value is over 15
+        if newSPD > 15 {
+            return Err(formatError(format!("SPD IV value is \"{}\", which is over max value 15", newSPD)));
+        }
+
+        // If it's not, we set the new HP
+        self.spd = newSPD;
+
+        // And return an Ok
+        return Ok(true);
     }
 
     /// Setter for Special IV
     /// 
     /// IV's can only be values 0-15
-    pub fn setSPC(&self, newSPC: u16) -> Result<bool, String> {
-        todo!("Implement Me")
+    pub fn setSPC(&mut self, newSPC: u16) -> Result<bool, String> {
+        // First we check if the value is over 15
+        if newSPC > 15 {
+            return Err(formatError(format!("SPC IV value is \"{}\", which is over max value 15", newSPC)));
+        }
+
+        // If it's not, we set the new HP
+        self.spd = newSPC;
+
+        // And return an Ok
+        return Ok(true);    
     }
 
 }
@@ -268,7 +322,7 @@ mod IVTests {
         // Boundary value is 15, this is over the value
         let newSPD: u16 = 16;
 
-        let changeSPCREsult = testIVs.setSPD(newSPD); 
+        let changeSPCREsult = testIVs.setSPC(newSPD); 
 
         assert!(changeSPCREsult.is_err());
         assert_eq!(changeSPCREsult.unwrap_err(), "\u{1b}[0;31mError\u{1b}[0m: SPC IV value is \"16\", which is over max value 15");
