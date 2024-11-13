@@ -164,7 +164,6 @@ impl Pokemon {
         self.ot = newOTID;
     }
 
-
     /// Setter for Pokemon OT Nickname
     pub fn setOTN(&mut self, newOTN:String) -> Result<bool, String>{
         
@@ -179,12 +178,88 @@ impl Pokemon {
         // and return an Ok
         return Ok(true);
     }
+
+    // SETTERS FOR EVs
+
+    /// Setter for Pokemon HP EV
+    /// 
+    /// This is an abstraction for pokemonStats::EVs::setHP()
+    pub fn setEV_HP(&mut self, newHP: u16) {
+        todo!("Implement Me")
+    }
+
+    /// Setter for Pokemon ATK EV
+    /// 
+    /// This is an abstraction for pokemonStats::EVs::setATK()
+    pub fn setEV_ATK(&mut self, newATK: u16) {
+        todo!("Implement Me")
+    }
+
+    /// Setter for Pokemon DEF EV
+    /// 
+    /// This is an abstraction for pokemonStats::EVs::setDEF()
+    pub fn setEV_DEF(&mut self, newDEF: u16) {
+        todo!("Implement Me")
+    }
+
+    /// Setter for Pokemon SPD EV
+    /// 
+    /// This is an abstraction for pokemonStats::EVs::setSPD()
+    pub fn setEV_SPD(&mut self, newSPD: u16) {
+        todo!("Implement Me")
+    }
+
+    /// Setter for Pokemon SPC EV
+    /// 
+    /// This is an abstraction for pokemonStats::EVs::setSPC()
+    pub fn setEV_SPC(&mut self, newSPC: u16) {
+        todo!("Implement Me")
+    }
+
+    // SETTERS FOR IVs
+
+    /// Setter for Pokemon HP IV
+    /// 
+    /// This is an abstraction for pokemonStats::IVs::setHP()
+    pub fn setIV_HP(&mut self, newHP: u16) -> Result<bool, String> {
+        todo!("Implement Me")
+    }
+
+    /// Setter for Pokemon ATK IV
+    /// 
+    /// This is an abstraction for pokemonStats::IVs::setATK()
+    pub fn setIV_ATK(&mut self, newATK: u16) -> Result<bool, String> {
+        todo!("Implement Me")
+    }
+
+    /// Setter for Pokemon DEF IV
+    /// 
+    /// This is an abstraction for pokemonStats::IVs::setDEF()
+    pub fn setIV_DEF(&mut self, newDEF: u16) -> Result<bool, String> {
+        todo!("Implement Me")
+    }
+
+    /// Setter for Pokemon SPD IV
+    /// 
+    /// This is an abstraction for pokemonStats::IVs::setSPD()
+    pub fn setIV_SPD(&mut self, newSPD: u16) -> Result<bool, String> {
+        todo!("Implement Me")
+    }
+
+    /// Setter for Pokemon SPC IV
+    /// 
+    /// This is an abstraction for pokemonStats::IVs::setSPC()
+    pub fn setIV_SPC(&mut self, newSPC: u16) -> Result<bool, String> {
+        todo!("Implement Me")
+    }
+
+
 }
 
 
 
 #[cfg(test)]
-mod tests {
+mod basicPkmnTests {
     use std::u16;
 
     use super::*;
@@ -301,6 +376,223 @@ mod tests {
 
         assert!(changeOTNResult.is_err());
         assert_eq!(changeOTNResult.unwrap_err(),"\u{1b}[0;31mError\u{1b}[0m: OTN \"Professor Oak\" is over 7 characters.");
+    }
+
+}
+
+#[cfg(test)]
+mod EVTests {
+    use super::*;
+
+    #[test]
+    fn setEV_HP_Correct() {
+
+        let mut testPkmn = Pokemon::new();
+ 
+         let newHP: u16 = 65_535;
+ 
+         testPkmn.setEV_HP(newHP);
+ 
+         assert_eq!(testPkmn.getEVs().getHP(), &newHP);
+ 
+    }
+ 
+    #[test]
+    fn setEV_ATK_Correct() {
+ 
+        let mut testPkmn = Pokemon::new();
+ 
+         let newATK: u16 = 65_535;
+ 
+         testPkmn.setEV_ATK(newATK);
+ 
+         assert_eq!(testPkmn.getEVs().getATK(), &newATK);
+ 
+    }
+ 
+    #[test]
+    fn setEV_DEF_Correct() {
+ 
+        let mut testPkmn = Pokemon::new();
+ 
+         let newDEF: u16 = 65_535;
+ 
+         testPkmn.setEV_DEF(newDEF);
+ 
+         assert_eq!(testPkmn.getEVs().getDEF(), &newDEF);
+ 
+    }
+ 
+    #[test]
+    fn setEV_SPD_Correct() {
+ 
+        let mut testPkmn = Pokemon::new();
+ 
+         let newSPD: u16 = 65_535;
+ 
+         testPkmn.setEV_SPD(newSPD);
+ 
+         assert_eq!(testPkmn.getEVs().getSPD(), &newSPD);
+ 
+    }
+ 
+    #[test]
+    fn setEV_SPC_Correct() {
+ 
+        let mut testPkmn = Pokemon::new();
+ 
+         let newSPC: u16 = 65_535;
+ 
+         testPkmn.setEV_SPC(newSPC);
+ 
+         assert_eq!(testPkmn.getEVs().getSPC(), &newSPC);
+ 
+    }
+ 
+}
+
+#[cfg(test)]
+mod IVTests {
+    use super::*;
+
+    #[test]
+    fn setIV_HP_Correct() {
+        let mut testPkmn = Pokemon::new();
+
+        // Boundary value
+        let newHP: u16 = 15;
+
+        let changeHPREsult = testPkmn.setIV_HP(newHP); 
+
+        assert!(changeHPREsult.is_ok());
+        assert_eq!(changeHPREsult.unwrap(), true);
+
+    }
+
+    #[test]
+    fn setIV_HP_Incorrect() {
+        let mut testPkmn = Pokemon::new();
+
+        // Boundary value is 15, this is over the value
+        let newHP: u16 = 16;
+
+        let changeHPREsult = testPkmn.setIV_HP(newHP); 
+
+        assert!(changeHPREsult.is_err());
+        assert_eq!(changeHPREsult.unwrap_err(), "\u{1b}[0;31mError\u{1b}[0m: HP IV value is \"16\", which is over max value 15");
+
+    }
+    
+    #[test]
+    fn setIV_ATK_Correct() {
+        let mut testPkmn = Pokemon::new();
+
+        // Boundary value
+        let newATK: u16 = 15;
+
+        let changeATKREsult = testPkmn.setIV_ATK(newATK); 
+
+        assert!(changeATKREsult.is_ok());
+        assert_eq!(changeATKREsult.unwrap(), true);
+
+    }
+
+    #[test]
+    fn setIV_ATK_Incorrect() {
+        let mut testPkmn = Pokemon::new();
+
+        // Boundary value is 15, this is over the value
+        let newATK: u16 = 16;
+
+        let changeATKREsult = testPkmn.setIV_ATK(newATK); 
+
+        assert!(changeATKREsult.is_err());
+        assert_eq!(changeATKREsult.unwrap_err(), "\u{1b}[0;31mError\u{1b}[0m: ATK IV value is \"16\", which is over max value 15");
+
+    }
+
+    #[test]
+    fn setIV_DEF_Correct() {
+        let mut testPkmn = Pokemon::new();
+
+        // Boundary value
+        let newDEF: u16 = 15;
+
+        let changeDEFREsult = testPkmn.setIV_DEF(newDEF); 
+
+        assert!(changeDEFREsult.is_ok());
+        assert_eq!(changeDEFREsult.unwrap(), true);
+
+    }
+
+    #[test]
+    fn setIV_DEF_Incorrect() {
+        let mut testPkmn = Pokemon::new();
+
+        // Boundary value is 15, this is over the value
+        let newDEF: u16 = 16;
+
+        let changeDEFREsult = testPkmn.setIV_DEF(newDEF); 
+
+        assert!(changeDEFREsult.is_err());
+        assert_eq!(changeDEFREsult.unwrap_err(), "\u{1b}[0;31mError\u{1b}[0m: DEF IV value is \"16\", which is over max value 15");
+
+    }
+
+    #[test]
+    fn setIV_SPD_Correct() {
+        let mut testPkmn = Pokemon::new();
+
+        // Boundary value
+        let newSPD: u16 = 15;
+
+        let changeSPDREsult = testPkmn.setIV_SPD(newSPD); 
+
+        assert!(changeSPDREsult.is_ok());
+        assert_eq!(changeSPDREsult.unwrap(), true);
+
+    }
+
+    #[test]
+    fn setIV_SPD_Incorrect() {
+        let mut testPkmn = Pokemon::new();
+
+        // Boundary value is 15, this is over the value
+        let newSPD: u16 = 16;
+
+        let changeSPDREsult = testPkmn.setIV_SPD(newSPD); 
+
+        assert!(changeSPDREsult.is_err());
+        assert_eq!(changeSPDREsult.unwrap_err(), "\u{1b}[0;31mError\u{1b}[0m: SPD IV value is \"16\", which is over max value 15");
+
+    }
+
+    #[test]
+    fn setIV_SPC_Correct() {
+        let mut testPkmn = Pokemon::new();
+
+        // Boundary value
+        let newSPC: u16 = 15;
+
+        let changeSPCREsult = testPkmn.setIV_SPD(newSPC); 
+
+        assert!(changeSPCREsult.is_ok());
+        assert_eq!(changeSPCREsult.unwrap(), true);
+
+    }
+
+    #[test]
+    fn setIV_SPC_Incorrect() {
+        let mut testPkmn = Pokemon::new();
+
+        // Boundary value is 15, this is over the value
+        let newSPD: u16 = 16;
+
+        let changeSPCREsult = testPkmn.setIV_SPC(newSPD); 
+
+        assert!(changeSPCREsult.is_err());
+        assert_eq!(changeSPCREsult.unwrap_err(), "\u{1b}[0;31mError\u{1b}[0m: SPC IV value is \"16\", which is over max value 15");
+
     }
 
 }

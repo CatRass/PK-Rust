@@ -332,7 +332,6 @@ mod IVTests {
 
 #[derive(Debug)]
 pub struct EVs {
-    // TODO: Make Getters
     hp: u16,
     atk: u16,
     def: u16,
