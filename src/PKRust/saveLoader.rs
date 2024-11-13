@@ -250,70 +250,160 @@ impl Save {
     /// 
     /// Abstraction for pokemon::Pokemon::setEV_HP()
     pub fn setPartyPokemonEV_HP(&mut self, partyPokemon: usize, newHP: u16) -> Result<bool, String> {
-        todo!("Implement Me")
+        // First we check that the party index is existing
+        if partyPokemon > self.party.len() - 1 {
+            return Err(formatError(format!("There is no Pokemon in party slot {}", partyPokemon)));
+        }
+
+        // Then we perform the change (no need to store the result, as EVs don't return Result objects)
+        self.party[partyPokemon].setEV_HP(newHP);
+
+        // And return a success
+        return Ok(true);
     } 
 
     /// Party Pokemon Setter for ATK EV
     /// 
     /// Abstraction for pokemon::Pokemon::setEV_ATK()
     pub fn setPartyPokemonEV_ATK(&mut self, partyPokemon: usize, newATK: u16) -> Result<bool, String> {
-        todo!("Implement Me")
+        // First we check that the party index is existing
+        if partyPokemon > self.party.len() - 1 {
+            return Err(formatError(format!("There is no Pokemon in party slot {}", partyPokemon)));
+        }
+
+        // Then we perform the change (no need to store the result, as EVs don't return Result objects)
+        self.party[partyPokemon].setEV_ATK(newATK);
+
+        // And return a success
+        return Ok(true);
     } 
 
     /// Party Pokemon Setter for DEF EV
     /// 
     /// Abstraction for pokemon::Pokemon::setEV_DEF()
     pub fn setPartyPokemonEV_DEF(&mut self, partyPokemon: usize, newDEF: u16) -> Result<bool, String> {
-        todo!("Implement Me")
+        // First we check that the party index is existing
+        if partyPokemon > self.party.len() - 1 {
+            return Err(formatError(format!("There is no Pokemon in party slot {}", partyPokemon)));
+        }
+
+        // Then we perform the change (no need to store the result, as EVs don't return Result objects)
+        self.party[partyPokemon].setEV_DEF(newDEF);
+
+        // And return a success
+        return Ok(true);
     } 
 
     /// Party Pokemon Setter for SPD EV
     /// 
     /// Abstraction for pokemon::Pokemon::setEV_SPD()
     pub fn setPartyPokemonEV_SPD(&mut self, partyPokemon: usize, newSPD: u16) -> Result<bool, String> {
-        todo!("Implement Me")
+        // First we check that the party index is existing
+        if partyPokemon > self.party.len() - 1 {
+            return Err(formatError(format!("There is no Pokemon in party slot {}", partyPokemon)));
+        }
+
+        // Then we perform the change (no need to store the result, as EVs don't return Result objects)
+        self.party[partyPokemon].setEV_SPD(newSPD);
+
+        // And return a success
+        return Ok(true);
     } 
 
     /// Party Pokemon Setter for SPC EV
     /// 
     /// Abstraction for pokemon::Pokemon::setEV_SPC()
     pub fn setPartyPokemonEV_SPC(&mut self, partyPokemon: usize, newSPC: u16) -> Result<bool, String> {
-        todo!("Implement Me")
+        // First we check that the party index is existing
+        if partyPokemon > self.party.len() - 1 {
+            return Err(formatError(format!("There is no Pokemon in party slot {}", partyPokemon)));
+        }
+
+        // Then we perform the change (no need to store the result, as EVs don't return Result objects)
+        self.party[partyPokemon].setEV_SPC(newSPC);
+
+        // And return a success
+        return Ok(true);
     } 
 
     /// Party Pokemon Setter for HP IV
     /// 
     /// Abstraction for pokemon::Pokemon::setIV_HP()
     pub fn setPartyPokemonIV_HP(&mut self, partyPokemon: usize, newHP: u16) -> Result<bool, String> {
-        todo!("Implement Me")
+        // First we check that the party index is existing
+        if partyPokemon > self.party.len() - 1 {
+            return Err(formatError(format!("There is no Pokemon in party slot {}", partyPokemon)));
+        }
+
+        // Then we perform the change (no need to store the result, as EVs don't return Result objects)
+        let changeHPResult = self.party[partyPokemon].setIV_HP(newHP);
+
+        // And return a success
+        return changeHPResult;
     } 
 
     /// Party Pokemon Setter for ATK IV
     /// 
     /// Abstraction for pokemon::Pokemon::setIV_ATK()
     pub fn setPartyPokemonIV_ATK(&mut self, partyPokemon: usize, newATK: u16) -> Result<bool, String> {
-        todo!("Implement Me")
+        // First we check that the party index is existing
+        if partyPokemon > self.party.len() - 1 {
+            return Err(formatError(format!("There is no Pokemon in party slot {}", partyPokemon)));
+        }
+
+        // Then we perform the change (no need to store the result, as EVs don't return Result objects)
+        let changeATKResult = self.party[partyPokemon].setIV_ATK(newATK);
+
+        // And return a success
+        return changeATKResult;
     } 
 
     /// Party Pokemon Setter for DEF IV
     /// 
     /// Abstraction for pokemon::Pokemon::setIV_DEF()
     pub fn setPartyPokemonIV_DEF(&mut self, partyPokemon: usize, newDEF: u16) -> Result<bool, String> {
-        todo!("Implement Me")
+        // First we check that the party index is existing
+        if partyPokemon > self.party.len() - 1 {
+            return Err(formatError(format!("There is no Pokemon in party slot {}", partyPokemon)));
+        }
+
+        // Then we perform the change (no need to store the result, as EVs don't return Result objects)
+        let changeDEFResult = self.party[partyPokemon].setIV_DEF(newDEF);
+
+        // And return a success
+        return changeDEFResult;
     } 
 
     /// Party Pokemon Setter for SPD IV
     /// 
     /// Abstraction for pokemon::Pokemon::setIV_SPD()
     pub fn setPartyPokemonIV_SPD(&mut self, partyPokemon: usize, newSPD: u16) -> Result<bool, String> {
-        todo!("Implement Me")
+        // First we check that the party index is existing
+        if partyPokemon > self.party.len() - 1 {
+            return Err(formatError(format!("There is no Pokemon in party slot {}", partyPokemon)));
+        }
+
+        // Then we perform the change (no need to store the result, as EVs don't return Result objects)
+        let changeSPDResult = self.party[partyPokemon].setIV_SPD(newSPD);
+
+        // And return a success
+        return changeSPDResult;
     } 
 
     /// Party Pokemon Setter for SPC IV
     /// 
     /// Abstraction for pokemon::Pokemon::setIV_SPC()
     pub fn setPartyPokemonIV_SPC(&mut self, partyPokemon: usize, newSPC: u16) -> Result<bool, String> {
-        todo!("Implement Me")
+        // First we check that the party index is existing
+        if partyPokemon > self.party.len() - 1 {
+            return Err(formatError(format!("There is no Pokemon in party slot {}", partyPokemon)));
+        }
+
+        // Then we perform the change (no need to store the result, as EVs don't return Result objects)
+        let changeSPCResult = self.party[partyPokemon].setIV_SPC(newSPC);
+
+        // And return a success
+        return changeSPCResult;
     } 
 
 
@@ -1006,7 +1096,7 @@ mod IVPartyPokemonSetterTests {
         // Over the limit of 15
         let newHP:u16 = 16;
 
-        let changeHPResult = testSave.setPartyPokemonIV_HP(1, newHP);
+        let changeHPResult = testSave.setPartyPokemonIV_HP(0, newHP);
 
         assert!(changeHPResult.is_err());
         assert_eq!(changeHPResult.unwrap_err(), "\u{1b}[0;31mError\u{1b}[0m: HP IV value is \"16\", which is over max value 15");
@@ -1043,7 +1133,7 @@ mod IVPartyPokemonSetterTests {
         // Over the limit of 15
         let newATK:u16 = 16;
 
-        let changeATKResult = testSave.setPartyPokemonIV_ATK(1, newATK);
+        let changeATKResult = testSave.setPartyPokemonIV_ATK(0, newATK);
 
         assert!(changeATKResult.is_err());
         assert_eq!(changeATKResult.unwrap_err(), "\u{1b}[0;31mError\u{1b}[0m: ATK IV value is \"16\", which is over max value 15");
@@ -1080,7 +1170,7 @@ mod IVPartyPokemonSetterTests {
         // Over the limit of 15
         let newDEF:u16 = 16;
 
-        let changeDEFResult = testSave.setPartyPokemonIV_DEF(1, newDEF);
+        let changeDEFResult = testSave.setPartyPokemonIV_DEF(0, newDEF);
 
         assert!(changeDEFResult.is_err());
         assert_eq!(changeDEFResult.unwrap_err(), "\u{1b}[0;31mError\u{1b}[0m: DEF IV value is \"16\", which is over max value 15");
@@ -1117,7 +1207,7 @@ mod IVPartyPokemonSetterTests {
         // Over the limit of 15
         let newSPD:u16 = 16;
 
-        let changeSPDResult = testSave.setPartyPokemonIV_SPD(1, newSPD);
+        let changeSPDResult = testSave.setPartyPokemonIV_SPD(0, newSPD);
 
         assert!(changeSPDResult.is_err());
         assert_eq!(changeSPDResult.unwrap_err(), "\u{1b}[0;31mError\u{1b}[0m: SPD IV value is \"16\", which is over max value 15");
@@ -1154,7 +1244,7 @@ mod IVPartyPokemonSetterTests {
         // Over the limit of 15
         let newSPC:u16 = 16;
 
-        let changeSPCResult = testSave.setPartyPokemonIV_SPC(1, newSPC);
+        let changeSPCResult = testSave.setPartyPokemonIV_SPC(0, newSPC);
 
         assert!(changeSPCResult.is_err());
         assert_eq!(changeSPCResult.unwrap_err(), "\u{1b}[0;31mError\u{1b}[0m: SPC IV value is \"16\", which is over max value 15");
