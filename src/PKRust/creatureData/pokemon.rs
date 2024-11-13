@@ -185,35 +185,35 @@ impl Pokemon {
     /// 
     /// This is an abstraction for pokemonStats::EVs::setHP()
     pub fn setEV_HP(&mut self, newHP: u16) {
-        todo!("Implement Me")
+        self.evs.setHP(newHP);
     }
 
     /// Setter for Pokemon ATK EV
     /// 
     /// This is an abstraction for pokemonStats::EVs::setATK()
     pub fn setEV_ATK(&mut self, newATK: u16) {
-        todo!("Implement Me")
+        self.evs.setATK(newATK);
     }
 
     /// Setter for Pokemon DEF EV
     /// 
     /// This is an abstraction for pokemonStats::EVs::setDEF()
     pub fn setEV_DEF(&mut self, newDEF: u16) {
-        todo!("Implement Me")
+        self.evs.setDEF(newDEF);
     }
 
     /// Setter for Pokemon SPD EV
     /// 
     /// This is an abstraction for pokemonStats::EVs::setSPD()
     pub fn setEV_SPD(&mut self, newSPD: u16) {
-        todo!("Implement Me")
+        self.evs.setSPD(newSPD);
     }
 
     /// Setter for Pokemon SPC EV
     /// 
     /// This is an abstraction for pokemonStats::EVs::setSPC()
     pub fn setEV_SPC(&mut self, newSPC: u16) {
-        todo!("Implement Me")
+        self.evs.setSPC(newSPC);
     }
 
     // SETTERS FOR IVs
@@ -222,35 +222,35 @@ impl Pokemon {
     /// 
     /// This is an abstraction for pokemonStats::IVs::setHP()
     pub fn setIV_HP(&mut self, newHP: u16) -> Result<bool, String> {
-        todo!("Implement Me")
+        return self.ivs.setHP(newHP);
     }
 
     /// Setter for Pokemon ATK IV
     /// 
     /// This is an abstraction for pokemonStats::IVs::setATK()
     pub fn setIV_ATK(&mut self, newATK: u16) -> Result<bool, String> {
-        todo!("Implement Me")
+        return self.ivs.setATK(newATK);
     }
 
     /// Setter for Pokemon DEF IV
     /// 
     /// This is an abstraction for pokemonStats::IVs::setDEF()
     pub fn setIV_DEF(&mut self, newDEF: u16) -> Result<bool, String> {
-        todo!("Implement Me")
+        return self.ivs.setDEF(newDEF);
     }
 
     /// Setter for Pokemon SPD IV
     /// 
     /// This is an abstraction for pokemonStats::IVs::setSPD()
     pub fn setIV_SPD(&mut self, newSPD: u16) -> Result<bool, String> {
-        todo!("Implement Me")
+        return self.ivs.setSPD(newSPD);
     }
 
     /// Setter for Pokemon SPC IV
     /// 
     /// This is an abstraction for pokemonStats::IVs::setSPC()
     pub fn setIV_SPC(&mut self, newSPC: u16) -> Result<bool, String> {
-        todo!("Implement Me")
+        return self.ivs.setSPC(newSPC);
     }
 
 
