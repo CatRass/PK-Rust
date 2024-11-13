@@ -442,69 +442,69 @@ mod EVTests {
 
     use super::*;
 
-   #[test]
-   fn setHP_Correct() {
+    #[test]
+    fn setHP_Correct() {
 
-        let mut testEVs = EVs::new();
+            let mut testEVs = EVs::new();
 
-        let newHP: u16 = 65_535;
+            let newHP: u16 = 65_535;
 
-        testEVs.setHP(newHP);
+            testEVs.setHP(newHP);
 
-        assert_eq!(testEVs.getHP(), &newHP);
+            assert_eq!(testEVs.getHP(), &newHP);
 
-   }
+    }
 
-   #[test]
-   fn setATK_Correct() {
+    #[test]
+    fn setATK_Correct() {
 
-        let mut testEVs = EVs::new();
+            let mut testEVs = EVs::new();
 
-        let newATK: u16 = 65_535;
+            let newATK: u16 = 65_535;
 
-        testEVs.setATK(newATK);
+            testEVs.setATK(newATK);
 
-        assert_eq!(testEVs.getATK(), &newATK);
+            assert_eq!(testEVs.getATK(), &newATK);
 
-   }
+    }
 
-   #[test]
-   fn setDEF_Correct() {
+    #[test]
+    fn setDEF_Correct() {
 
-        let mut testEVs = EVs::new();
+            let mut testEVs = EVs::new();
 
-        let newDEF: u16 = 65_535;
+            let newDEF: u16 = 65_535;
 
-        testEVs.setDEF(newDEF);
+            testEVs.setDEF(newDEF);
 
-        assert_eq!(testEVs.getDEF(), &newDEF);
+            assert_eq!(testEVs.getDEF(), &newDEF);
 
-   }
+    }
 
-   #[test]
-   fn setSPD_Correct() {
+    #[test]
+    fn setSPD_Correct() {
 
-        let mut testEVs = EVs::new();
+            let mut testEVs = EVs::new();
 
-        let newSPD: u16 = 65_535;
+            let newSPD: u16 = 65_535;
 
-        testEVs.setSPD(newSPD);
+            testEVs.setSPD(newSPD);
 
-        assert_eq!(testEVs.getSPD(), &newSPD);
+            assert_eq!(testEVs.getSPD(), &newSPD);
 
-   }
+    }
 
-   #[test]
-   fn setSPC_Correct() {
+    #[test]
+    fn setSPC_Correct() {
 
-        let mut testEVs = EVs::new();
+            let mut testEVs = EVs::new();
 
-        let newSPC: u16 = 65_535;
+            let newSPC: u16 = 65_535;
 
-        testEVs.setSPC(newSPC);
+            testEVs.setSPC(newSPC);
 
-        assert_eq!(testEVs.getSPC(), &newSPC);
+            assert_eq!(testEVs.getSPC(), &newSPC);
 
-   }
+    }
 
 }
