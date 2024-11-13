@@ -1,15 +1,6 @@
 use super::addresses::{CHECKSUM_END_ADDR, CHECKSUM_RESULT, CHECKSUM_START_ADDR};
 use std::num::Wrapping;
 
-pub fn splitByte(unsignedByte: &u8) -> (u8, u8) {
-    let byteStr = format!("{:08b}",unsignedByte);
-    let (firstByteStr, secondByteStr) = byteStr.split_at(4);
-    let firstByte:u8 = u8::from_str_radix(firstByteStr, 2).unwrap();
-    let secondByte:u8 = u8::from_str_radix(secondByteStr, 2).unwrap();
-    
-    return (firstByte, secondByte);
-}
-
 /// Decodes text, as text in most games uses character encoding
 pub fn textDecode(encoded: &[i16; 11]) -> String{
     let mut encodedText: Vec<u8> = Vec::new();
@@ -85,6 +76,7 @@ pub fn textDecode(encoded: &[i16; 11]) -> String{
     return decodedText;
 }
 
+#[allow(dead_code)]
 /// Encodes text into the character encoding used by Gen 1
 pub fn textEncode(decoded: &String) -> [i16; 11]{
     let mut encoded: [i16; 11] = [0; 11];
