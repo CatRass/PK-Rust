@@ -423,16 +423,35 @@ impl Save {
     }
 
     /// Retrieves the amount of money the player has
+    /// TODO: Figure out how to do this without using strings
     fn getMoneyFromSave(save: &Vec<u8>) -> u32{
+        
+        // let mut moneyInt:u32 = 0b0;
+        // for moneyOffset in 0..3 {
+        //     moneyInt |= save[MONEY_ADDR+moneyOffset] as u32;
+        //     moneyInt <<= 8;
+        // }
+
+        // println!("Supposed to be: {0:08b}{:08b}{:08b}{:08b}", save[MONEY_ADDR],save[MONEY_ADDR+1],save[MONEY_ADDR+2]);
+        // println!("Is: {:032b}", moneyInt);
+
+        // return moneyInt
+
         return format!("{:02X}{:02X}{:02X}",save[MONEY_ADDR],save[MONEY_ADDR+1],save[MONEY_ADDR+2])
         .parse::<u32>()
         .unwrap();
+        
     }
 
     /// Retrieves the trainer ID
     fn getTrainerIDFromSave(save: &Vec<u8>) -> u16 {
-        let stringID = format!("{:02X}{:02X}",save[ID_ADDR],save[ID_ADDR+1]);
-        return u16::from_str_radix(&stringID, 16).unwrap();
+
+        let mut trainerID:u16 = 0b0;
+
+        trainerID |= (save[ID_ADDR] as u16) << 8;
+        trainerID |= save[ID_ADDR+1] as u16;
+
+        return trainerID;
     }
 
     /// Retrieves the players party of Pokemon
@@ -1250,4 +1269,24 @@ mod IVPartyPokemonSetterTests {
         assert_eq!(changeSPCResult.unwrap_err(), "\u{1b}[0;31mError\u{1b}[0m: SPC IV value is \"16\", which is over max value 15");
     }
 
+}
+
+#[cfg(test)]
+/// These tests are specifically for sanity checking bit manipulation
+/// as opposed to strings with radix conversions.
+mod fileLoadingBitManipulationTests {
+    use super::*;
+
+    #[test]
+    fn getTrainerIDFromSave_BitManipTest() {
+        // Read a test save file
+        let testSave = fs::read("./test/POKEMON BLUE.sav").unwrap();
+
+        // Get the ID with bit manipulation
+        let readID = Save::getTrainerIDFromSave(&testSave);
+        // Get the expected ID with the simpled String-radix method
+        let expectedlID = u16::from_str_radix(&format!("{:02X}{:02X}",testSave[ID_ADDR],testSave[ID_ADDR+1]), 16).unwrap();
+
+        assert_eq!(readID, expectedlID);
+    }
 }
