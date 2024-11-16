@@ -549,10 +549,12 @@ impl Save {
 
     /// Function for retrieving a Pokemons Original Trainers ID
     fn getPokemonOTIDFromSave(save: &Vec<u8>, currAddr: &usize) -> u16{
-        return u16::from_str_radix( 
-            &format!("{:02X}{:02X}", save[currAddr+OT_OFF],save[currAddr+OT_OFF+1]),
-            16
-        ).unwrap();
+        let mut pokemonOTID:u16 = 0b0;
+
+        pokemonOTID |= (save[currAddr+OT_OFF] as u16) << 8;
+        pokemonOTID |= save[currAddr+OT_OFF+1] as u16;
+
+        return pokemonOTID;
     }
 
     /// Function for retrieving a Pokemons Original Trainers Name
@@ -571,10 +573,13 @@ impl Save {
 
     /// Function for retrieving the Pokemons current Health Points
     fn getPokemonHPFromSave(save: &Vec<u8>, currAddr: &usize) -> i16{
-        return i16::from_str_radix(
-            &format!("{:02X}{:02X}",save[currAddr+HP_OFF],save[currAddr+HP_OFF+1]), 
-            16
-            ).unwrap();
+
+        let mut pokemonHP:i16 = 0x0;
+
+        pokemonHP |=  (save[currAddr+HP_OFF] as i16) << 8;
+        pokemonHP |=  save[currAddr+HP_OFF + 1] as i16;
+
+        return  pokemonHP;
     }
 
     /// Function for retrieving a Pokemons Nickname.
@@ -590,28 +595,26 @@ impl Save {
 
     /// Function for retrieving a Pokemons base stats
     fn getPokemonStatsFromSave(save: &Vec<u8>,currAddr: &usize) -> [u16;5] {
-        let mut stats: [u16;5] = [0; 5];
-            for stat in 0..5 {
-                let currAddr = currAddr+STAT_OFF+(stat*2);
-                stats[stat] = u16::from_str_radix(
-                                                &format!("{:02X}{:02X}",save[currAddr],save[currAddr+1]),
-                                                16
-                                            ).unwrap();
-            }
+        let mut stats: [u16;5] = [0x0; 5];
+        
+        for stat in 0..5 {
+            let currAddr = currAddr+STAT_OFF+(stat*2);
+            stats[stat] |= (save[currAddr] as u16) << 8;
+            stats[stat] |= save[currAddr + 1] as u16;
+        }
         
         return stats;
     }
 
     /// Function for retrieving a Pokemons Effort Values
     fn getPokemonEVsFromSave(save: &Vec<u8>,currAddr: &usize) -> [u16;5] {
-        let mut evs: [u16;5] = [0; 5];
-            for stat in 0..5 {
-                let currAddr = currAddr+EV_OFF+(stat*2);
-                evs[stat] = u16::from_str_radix(
-                                                &format!("{:02X}{:02X}",save[currAddr],save[currAddr+1]),
-                                                16
-                                            ).unwrap();
-            }
+        let mut evs: [u16;5] = [0x0; 5];
+
+        for stat in 0..5 {
+            let currAddr = currAddr+EV_OFF+(stat*2);
+            evs[stat] |= (save[currAddr] as u16) << 8;
+            evs[stat] |= save[currAddr + 1] as u16;
+        }
         
         return evs;
     }
@@ -623,14 +626,19 @@ impl Save {
 
     for moves in 0..4 {
         let moveIndex = save[moveAddr+moves] as u16;
-        let ppStr = format!("{:08b}",save[currAddr+PP_OFF+moves]);
-        let (ppUp,pp) = ppStr.split_at(2);
-        let currPP = u16::from_str_radix(pp, 2).unwrap();
-        let currPPUp = u8::from_str_radix(ppUp, 2).unwrap();
+
+        // As per the Wikiw (https://m.bulbapedia.bulbagarden.net/wiki/Pok%C3%A9mon_data_structure_(Generation_I)#PP), PP values are determined by:
+        // The current PP-Up being the first two bits of the move
+        // The current PP value being the remaining 6 bits
+        let ppValues = save[currAddr+PP_OFF+moves];
+
+        let PP: u16 = ((ppValues << 2) >> 2) as u16 ;
+        let PPUp: u8 = ppValues >> 6;
+
         if moveIndex == 0 {
             returnVec.push(Move::empty());
         } else {
-            returnVec.push(Move::get(moveIndex, currPP, currPPUp).unwrap());
+            returnVec.push(Move::get(moveIndex, PP, PPUp).unwrap());
         }
     }
 
@@ -638,26 +646,28 @@ impl Save {
 }
 
     /// Function for retrieving a Pokemons Individual Values 
-    /// (Also known as Determinant Values)
+    /// Also known as [Determinant Values](https://m.bulbapedia.bulbagarden.net/wiki/Individual_values)
     /// 
-    /// **TODO**: Figure out a better way to split into fours
+    /// **NOTE**: This function does not have a bit manip test as the original implementation
+    /// was faulty. 
     fn getPokemonIVsFromSave(save: &Vec<u8>,currAddr: &usize) -> [u16;5]{
-        let allIVs = format!("{:08b}{:08b}",save[currAddr+IV_OFF],save[currAddr+IV_OFF+1]);
-        let (half, half2) = allIVs.split_at(8);
-        let ((atk, def), (spd, spc)) = (half.split_at(4), half2.split_at(4));
-        let hp = format!("{}{}{}{}",
-                                            atk.chars().last().unwrap(),
-                                            def.chars().last().unwrap(),
-                                            spd.chars().last().unwrap(),
-                                            spc.chars().last().unwrap()
-                                        );
-        // println!("At address: {:#0X} IV: {}",pkmnAddress+IV_OFF,allIVs);
+
+        let atk = (save[currAddr+IV_OFF] >> 4) as u16;
+        let def = ((save[currAddr+IV_OFF] << 4) >> 4) as u16;
+        let spd = (save[currAddr+IV_OFF+1] >> 4) as u16;
+        let spc = ((save[currAddr+IV_OFF+1] << 4) >> 4) as u16;
+
+       
+        // For the HPIVs we have to get the last bits of all four stats
+        let mut hp = 0;
+        hp |= (atk & 1) << 3 | (def & 1) << 2 | (spd & 1) << 1 | (spc & 1);
+
         let ivs: [u16;5] = [
-                                u16::from_str_radix(atk,2).unwrap(),
-                                u16::from_str_radix(def,2).unwrap(),
-                                u16::from_str_radix(spd,2).unwrap(),
-                                u16::from_str_radix(spc,2).unwrap(),
-                                u16::from_str_radix(&hp,2).unwrap(),
+                                hp,
+                                atk,
+                                def,
+                                spd,
+                                spc
                             ];
         
         return ivs;
@@ -1279,14 +1289,172 @@ mod fileLoadingBitManipulationTests {
 
     #[test]
     fn getTrainerIDFromSave_BitManipTest() {
-        // Read a test save file
-        let testSave = fs::read("./test/POKEMON BLUE.sav").unwrap();
 
-        // Get the ID with bit manipulation
-        let readID = Save::getTrainerIDFromSave(&testSave);
-        // Get the expected ID with the simpled String-radix method
-        let expectedlID = u16::from_str_radix(&format!("{:02X}{:02X}",testSave[ID_ADDR],testSave[ID_ADDR+1]), 16).unwrap();
+        let testSaveList = ["./test/POKEMON YELLOW.sav", "./test/POKEMON YELLOW 2.sav", "./test/POKEMON BLUE.sav", "./test/Pokeblue.sav", "./test/POKEpi.sav"];
 
-        assert_eq!(readID, expectedlID);
+        for save in testSaveList {
+            // Read a test save file
+            let testSave = fs::read(save).unwrap();
+
+            // Get the ID with bit manipulation
+            let readID = Save::getTrainerIDFromSave(&testSave);
+            // Get the expected ID with the simpled String-radix method
+            let expectedlID = u16::from_str_radix(&format!("{:02X}{:02X}",testSave[ID_ADDR],testSave[ID_ADDR+1]), 16).unwrap();
+
+            assert_eq!(readID, expectedlID);
+        }
     }
+
+    #[test]
+    fn getPokemonOTIDFromSave_BitManipTest() {
+
+        let testSaveList = ["./test/POKEMON YELLOW.sav", "./test/POKEMON YELLOW 2.sav", "./test/POKEMON BLUE.sav", "./test/Pokeblue.sav", "./test/POKEpi.sav"];
+
+        for save in testSaveList {
+            // Read a test save file
+            let testSave = fs::read(save).unwrap();
+
+            let testPkmnAddress: usize = PARTY_ADDR + 0x8 + 0x2C;
+
+            // Get the ID with bit manipulation
+            let readID = Save::getPokemonOTIDFromSave(&testSave, &testPkmnAddress);
+            // Get the expected ID with the simpled String-radix method
+            let expectedlID = u16::from_str_radix(&format!("{:02X}{:02X}", testSave[testPkmnAddress+OT_OFF],testSave[testPkmnAddress+OT_OFF+1]),16).unwrap();
+
+            assert_eq!(readID, expectedlID);
+        }
+    }
+
+    #[test]
+    fn getPokemonHPFromSave_BitManipTest() {
+
+        let testSaveList = ["./test/POKEMON YELLOW.sav", "./test/POKEMON YELLOW 2.sav", "./test/POKEMON BLUE.sav", "./test/Pokeblue.sav", "./test/POKEpi.sav"];
+
+        for save in testSaveList {
+            // Read a test save file
+            let testSave = fs::read(save).unwrap();
+
+            let testPkmnAddress: usize = PARTY_ADDR + 0x8 + 0x2C;
+
+            // Get the HP with bit manipulation
+            let readHP = Save::getPokemonHPFromSave(&testSave, &testPkmnAddress);
+            // Get the expected HP with the simpled String-radix method
+            let expectedHP = i16::from_str_radix(&format!("{:02X}{:02X}",testSave[testPkmnAddress+HP_OFF],testSave[testPkmnAddress+HP_OFF+1]), 16).unwrap();
+
+            assert_eq!(readHP, expectedHP);
+        }
+    }
+
+    #[test]
+    fn getPokemonStatsFromSave_BitManipTest() {
+
+        let testSaveList = ["./test/POKEMON YELLOW.sav", "./test/POKEMON YELLOW 2.sav", "./test/POKEMON BLUE.sav", "./test/Pokeblue.sav", "./test/POKEpi.sav"];
+
+        for save in testSaveList {
+            // Read a test save file
+            let testSave = fs::read(save).unwrap();
+
+            let testPkmnAddress: usize = PARTY_ADDR + 0x8 + 0x2C;
+
+            // Get the stats with bit manipulation
+            let readStats = Save::getPokemonStatsFromSave(&testSave, &testPkmnAddress);
+
+            // Get the expected stats with the simpled String-radix method
+            let mut expectedStats: [u16;5] = [12345; 5];
+                for stat in 0..5 {
+                    let currAddr = testPkmnAddress+STAT_OFF+(stat*2);
+                    expectedStats[stat] = u16::from_str_radix(
+                                                    &format!("{:02X}{:02X}",testSave[currAddr],testSave[currAddr+1]),
+                                                    16
+                                                ).unwrap();
+                }
+
+            
+            assert_eq!(readStats, expectedStats);
+        }
+    }
+
+    #[test]
+    fn getPokemonEVsFromSave_BitManipTest() {
+
+        let testSaveList = ["./test/POKEMON YELLOW.sav", "./test/POKEMON YELLOW 2.sav", "./test/POKEMON BLUE.sav", "./test/Pokeblue.sav", "./test/POKEpi.sav"];
+
+        for save in testSaveList {
+            // Read a test save file
+            let testSave = fs::read(save).unwrap();
+
+            let testPkmnAddress: usize = PARTY_ADDR + 0x8 + 0x2C;
+
+            // Get the stats with bit manipulation
+            let readEVs = Save::getPokemonEVsFromSave(&testSave, &testPkmnAddress);
+
+            // Get the expected stats with the simpled String-radix method
+            let mut expectedEVs: [u16;5] = [12345; 5];
+                for ev in 0..5 {
+                    let currAddr = testPkmnAddress+EV_OFF+(ev*2);
+                    expectedEVs[ev] = u16::from_str_radix(
+                                                    &format!("{:02X}{:02X}",testSave[currAddr],testSave[currAddr+1]),
+                                                    16
+                                                ).unwrap();
+                }
+            
+            assert_eq!(readEVs, expectedEVs);
+        }
+    }
+
+    #[test]
+    fn getPokemonMovesFromSave_BitManipTest() {
+
+        let testSaveList = ["./test/POKEMON YELLOW.sav", "./test/POKEMON YELLOW 2.sav", "./test/POKEMON BLUE.sav", "./test/Pokeblue.sav", "./test/POKEpi.sav"];
+
+        for save in testSaveList {
+             // Read a test save file
+            let testSave = fs::read(save).unwrap();
+
+            let testPkmnAddress: usize = PARTY_ADDR + 0x8 + 0x2C;
+
+            // First, let's get the moves the old string way
+            let mut expectedMoves: Vec<Move> = Vec::new();
+            let moveAddr = testPkmnAddress + MOVE_OFF;
+        
+            for moves in 0..4 {
+                let moveIndex = testSave[moveAddr+moves] as u16;
+                let ppStr = format!("{:08b}",testSave[testPkmnAddress+PP_OFF+moves]);
+                let (ppUp,pp) = ppStr.split_at(2);
+                let currPP = u16::from_str_radix(pp, 2).unwrap();
+                let currPPUp = u8::from_str_radix(ppUp, 2).unwrap();
+                if moveIndex == 0 {
+                    expectedMoves.push(Move::empty());
+                } else {
+                    expectedMoves.push(Move::get(moveIndex, currPP, currPPUp).unwrap());
+                }
+            }
+
+            // Now we do it the new way
+            let actualMoves = Save::getPokemonMovesFromSave(&testSave, &testPkmnAddress);
+
+            // Now from these moves, let's create an Array for the PP, and PPUp
+            let mut expectedPPArr: [&u16; 4] = [&0; 4];
+            let mut expectedPPUpArr: [&u8; 4] = [&0; 4];
+
+            let mut actualPPArr: [&u16; 4] = [&0; 4];
+            let mut actualPPUpArr: [&u8; 4] = [&0; 4];
+
+            for index in 0..4 {
+                expectedPPArr[index] = expectedMoves[index].getPP();
+                expectedPPUpArr[index] = expectedMoves[index].getPPUp();
+                actualPPArr[index] = actualMoves[index].getPP();
+                actualPPUpArr[index] = actualMoves[index].getPPUp();
+            }
+
+            // And finally, we assert that all these values are the same
+            assert_eq!(actualPPArr,expectedPPArr);
+            assert_eq!(actualPPUpArr,expectedPPUpArr);
+
+        }
+       
+        
+
+    }
+
 }

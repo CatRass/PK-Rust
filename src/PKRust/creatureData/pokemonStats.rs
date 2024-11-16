@@ -52,11 +52,12 @@ impl IVs {
 
     /// Returns a string to display all stats
     pub fn to_string(&self) -> String {
-        return format!("\tATK IV: {}\n\tDEF IV:{}\n\tSPD IV: {}\n\tSPCL IV: {}\n",
+        return format!("\tHP IV: {}\n\tATK IV: {}\n\tDEF IV:{}\n\tSPD IV: {}\n\tSPCL IV: {}\n",
+                        self.hp,
                         self.atk,
                         self.def,
                         self.spd,
-                        self.spc
+                        self.spc,
                     );
     }
 
