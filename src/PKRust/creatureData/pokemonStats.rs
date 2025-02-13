@@ -3,12 +3,11 @@ use super::super::utils::formatError;
 
 #[derive(Debug)]
 pub struct Stats {
-    // TODO: Make a Getter for These
-    pub hp: u16,
-    pub atk: u16,
-    pub def: u16,
-    pub spd: u16,
-    pub spc: u16
+    hp: u16,
+    atk: u16,
+    def: u16,
+    spd: u16,
+    spc: u16
 }
 impl Stats {
     /// Returns a string to display all stats
@@ -22,6 +21,55 @@ impl Stats {
                     );
     }
 
+    // ========   GETTERS   ========
+
+    /// Returns the Pokemon's Base HP Stat
+    pub fn getHP(&self) -> &u16 {
+        return &self.hp;
+    }
+    /// Returns the Pokemon's Base ATK Stat
+    pub fn getATK(&self) -> &u16 {
+        return &self.atk;
+    }
+
+    /// Returns the Pokemon's Base DEF Stat
+    pub fn getDEF(&self) -> &u16 {
+        return &self.def;
+    }
+
+    /// Returns the Pokemon's Base SPD Stat
+    pub fn getSPD(&self) -> &u16 {
+        return &self.spd;
+    }
+
+    /// Returns the Pokemon's Base SPC Stat
+    pub fn getSPC(&self) -> &u16 {
+        return &self.spc;
+    }
+
+
+
+    // ========   SETTERS   ========
+
+    /// The constructor for the Stats struct.
+    /// 
+    /// stats[0]: hp
+    /// stats[1]: atk
+    /// stats[2]: def
+    /// stats[3]: spd
+    /// stats[4]: spc
+    pub fn set(stats: [u16;5]) -> Stats {
+        return Stats {
+            hp:     stats[0],
+            atk:    stats[1],
+            def:    stats[2],
+            spd:    stats[3],
+            spc:    stats[4]
+        }
+    }
+
+    // Currently no Setters are planned.
+                    
 }
 
 #[cfg(test)]

@@ -27,7 +27,7 @@ impl Pokemon {
 
         let evs = EVs::setAll(evArr);
         let ivs = IVs::setAll(ivArr);
-        let stats = Stats{hp: statArr[0], atk: statArr[1], def: statArr[2], spd: statArr[3], spc: statArr[4]};
+        let stats = Stats::set([statArr[0], statArr[1], statArr[2], statArr[3], statArr[4]]);
         
         return Pokemon{nickname, species, level, moves, ot, otn, hp, evs, ivs, stats};
     }
@@ -252,7 +252,6 @@ impl Pokemon {
     pub fn setIV_SPC(&mut self, newSPC: u16) -> Result<bool, String> {
         return self.ivs.setSPC(newSPC);
     }
-
 
 }
 
